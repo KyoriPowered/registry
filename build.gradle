@@ -28,6 +28,15 @@ repositories {
   mavenCentral()
 }
 
+dependencies {
+  compile 'com.google.guava:guava:26.0-jre'
+  compile 'org.checkerframework:checker-qual:2.5.4'
+  testCompile 'com.google.truth:truth:0.42'
+  testCompile 'com.google.truth.extensions:truth-java8-extension:0.42'
+  testCompile 'org.junit.jupiter:junit-jupiter-api:5.3.0-M1'
+  testCompile 'org.junit.jupiter:junit-jupiter-engine:5.3.0-M1'
+}
+
 task javadocJar(type: Jar) {
   classifier 'javadoc'
   from javadoc
