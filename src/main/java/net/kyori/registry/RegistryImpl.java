@@ -50,7 +50,7 @@ public class RegistryImpl<K, V> implements Registry<K, V> {
   }
 
   @Override
-  public void put(final @NonNull K key, final @NonNull V value) {
+  public void register(final @NonNull K key, final @NonNull V value) {
     requireNonNull(key, "key");
     requireNonNull(value, "value");
     this.map.put(key, value);

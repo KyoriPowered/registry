@@ -35,7 +35,7 @@ class DefaultedBiRegistryTest {
     assertEquals("aaa", registry.defaultKey());
     assertNull(registry.get("aaa"));
     assertNull(registry.get("ccc"));
-    registry.put("aaa", "bbb");
+    registry.register("aaa", "bbb");
     assertEquals("bbb", registry.get("aaa"));
     assertNull(registry.get("ccc"));
     assertEquals("bbb", registry.getOrDefault("ccc"));

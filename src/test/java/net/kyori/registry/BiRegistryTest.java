@@ -39,7 +39,7 @@ class BiRegistryTest {
   void testGetKey() {
     final BiRegistry<String, String> registry = new BiRegistryImpl<>();
     assertNull(registry.key("bbb"));
-    registry.put("aaa", "bbb");
+    registry.register("aaa", "bbb");
     assertEquals("aaa", registry.key("bbb"));
   }
 
@@ -47,7 +47,7 @@ class BiRegistryTest {
   void testGetValue() {
     final BiRegistry<String, String> registry = new BiRegistryImpl<>();
     assertNull(registry.get("aaa"));
-    registry.put("aaa", "bbb");
+    registry.register("aaa", "bbb");
     assertEquals("bbb", registry.get("aaa"));
   }
 
@@ -55,9 +55,9 @@ class BiRegistryTest {
   void testKeySet() {
     final BiRegistry<String, String> registry = new BiRegistryImpl<>();
     assertThat(registry.keySet()).isEmpty();
-    registry.put("eee", "fff");
-    registry.put("aaa", "bbb");
-    registry.put("ccc", "ddd");
+    registry.register("eee", "fff");
+    registry.register("aaa", "bbb");
+    registry.register("ccc", "ddd");
     assertThat(registry.keySet()).containsExactly("aaa", "ccc", "eee");
   }
 
@@ -65,16 +65,16 @@ class BiRegistryTest {
   void testIterator() {
     final BiRegistry<String, String> registry = new BiRegistryImpl<>();
     assertThat(ImmutableList.copyOf(registry.iterator())).isEmpty();
-    registry.put("eee", "fff");
-    registry.put("aaa", "bbb");
-    registry.put("ccc", "ddd");
+    registry.register("eee", "fff");
+    registry.register("aaa", "bbb");
+    registry.register("ccc", "ddd");
     assertThat(ImmutableList.copyOf(registry.iterator())).containsExactly("bbb", "ddd", "fff");
   }
 
   @Test
   void testIteratorRemove() {
     final BiRegistry<String, String> registry = new BiRegistryImpl<>();
-    registry.put("aaa", "bbb");
+    registry.register("aaa", "bbb");
     final Iterator<String> it = registry.iterator();
     assertTrue(it.hasNext());
     assertEquals("bbb", it.next());

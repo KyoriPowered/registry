@@ -53,8 +53,8 @@ public class DefaultedRegistryImpl<K, V> extends RegistryImpl<K, V> implements D
   }
 
   @Override
-  public void put(final @NonNull K key, final @NonNull V value) {
-    super.put(key, value);
+  public void register(final @NonNull K key, final @NonNull V value) {
+    super.register(key, value);
 
     if(this.defaultKey.equals(key)) {
       this.defaultValue = value;

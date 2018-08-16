@@ -40,7 +40,7 @@ class RegistryTest {
   void testGetPut() {
     final Registry<String, String> registry = new RegistryImpl<>();
     assertNull(registry.get("aaa"));
-    registry.put("aaa", "bbb");
+    registry.register("aaa", "bbb");
     assertEquals("bbb", registry.get("aaa"));
   }
 
@@ -48,9 +48,9 @@ class RegistryTest {
   void testKeySet() {
     final Registry<String, String> registry = new RegistryImpl<>();
     assertThat(registry.keySet()).isEmpty();
-    registry.put("eee", "fff");
-    registry.put("aaa", "bbb");
-    registry.put("ccc", "ddd");
+    registry.register("eee", "fff");
+    registry.register("aaa", "bbb");
+    registry.register("ccc", "ddd");
     assertThat(registry.keySet()).containsExactly("aaa", "ccc", "eee");
   }
 
@@ -58,16 +58,16 @@ class RegistryTest {
   void testIterator() {
     final Registry<String, String> registry = new RegistryImpl<>();
     assertThat(ImmutableList.copyOf(registry.iterator())).isEmpty();
-    registry.put("eee", "fff");
-    registry.put("aaa", "bbb");
-    registry.put("ccc", "ddd");
+    registry.register("eee", "fff");
+    registry.register("aaa", "bbb");
+    registry.register("ccc", "ddd");
     assertThat(ImmutableList.copyOf(registry.iterator())).containsExactly("bbb", "ddd", "fff");
   }
 
   @Test
   void testIteratorRemove() {
     final Registry<String, String> registry = new RegistryImpl<>();
-    registry.put("aaa", "bbb");
+    registry.register("aaa", "bbb");
     final Iterator<String> it = registry.iterator();
     assertTrue(it.hasNext());
     assertEquals("bbb", it.next());
@@ -78,9 +78,9 @@ class RegistryTest {
   void testStream() {
     final Registry<String, String> registry = new RegistryImpl<>();
     assertThat(registry.stream()).isEmpty();
-    registry.put("eee", "fff");
-    registry.put("aaa", "bbb");
-    registry.put("ccc", "ddd");
+    registry.register("eee", "fff");
+    registry.register("aaa", "bbb");
+    registry.register("ccc", "ddd");
     assertThat(registry.stream()).containsExactly("bbb", "ddd", "fff");
   }
 }

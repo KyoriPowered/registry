@@ -38,5 +38,5 @@ public interface Registry<K, V> extends RegistryGetter<K, V> {
    * @param key the key
    * @param value the value
    */
-  void put(final @NonNull K key, final @NonNull V value);
+  void register(final @NonNull K key, final @NonNull V value);
 }
