@@ -23,6 +23,7 @@
  */
 package net.kyori.registry;
 
+import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -38,6 +39,11 @@ public class DefaultedRegistryImpl<K, V> extends RegistryImpl<K, V> implements D
   private @MonotonicNonNull V defaultValue;
 
   public DefaultedRegistryImpl(final @NonNull K defaultKey) {
+    this.defaultKey = defaultKey;
+  }
+
+  public DefaultedRegistryImpl(final @NonNegative int expectedSize, final @NonNull K defaultKey) {
+    super(expectedSize);
     this.defaultKey = defaultKey;
   }
 

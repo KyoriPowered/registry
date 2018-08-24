@@ -26,6 +26,7 @@ package net.kyori.registry;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterators;
+import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -42,7 +43,19 @@ import static java.util.Objects.requireNonNull;
  * @param <V> the value type
  */
 public class BiRegistryImpl<K, V> implements BiRegistry<K, V> {
-  private final BiMap<K, V> map = HashBiMap.create();
+  private final BiMap<K, V> map;
+
+  public BiRegistryImpl() {
+    this(HashBiMap.create());
+  }
+
+  public BiRegistryImpl(final @NonNegative int expectedSize) {
+    this(HashBiMap.create(expectedSize));
+  }
+
+  private BiRegistryImpl(final @NonNull BiMap<K, V> map) {
+    this.map = map;
+  }
 
   @Override
   public @Nullable K key(final @NonNull V value) {

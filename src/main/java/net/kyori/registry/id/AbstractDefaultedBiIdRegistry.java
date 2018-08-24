@@ -24,6 +24,7 @@
 package net.kyori.registry.id;
 
 import net.kyori.registry.BiRegistryImpl;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -36,7 +37,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public abstract class AbstractDefaultedBiIdRegistry<K, V> extends BiRegistryImpl<K, V> implements DefaultedBiIdRegistry<K, V> {
   private final K defaultKey;
   private int defaultId;
-  private V defaultValue;
+  private @MonotonicNonNull V defaultValue;
 
   protected AbstractDefaultedBiIdRegistry(final @NonNull K defaultKey) {
     this.defaultKey = defaultKey;

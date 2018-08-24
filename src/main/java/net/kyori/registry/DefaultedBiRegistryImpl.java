@@ -23,6 +23,7 @@
  */
 package net.kyori.registry;
 
+import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -38,6 +39,11 @@ public class DefaultedBiRegistryImpl<K, V> extends BiRegistryImpl<K, V> implemen
   private @MonotonicNonNull V defaultValue;
 
   public DefaultedBiRegistryImpl(final @NonNull K defaultKey) {
+    this.defaultKey = defaultKey;
+  }
+
+  public DefaultedBiRegistryImpl(final @NonNegative int expectedSize, final @NonNull K defaultKey) {
+    super(expectedSize);
     this.defaultKey = defaultKey;
   }
 

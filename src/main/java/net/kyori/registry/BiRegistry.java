@@ -23,6 +23,9 @@
  */
 package net.kyori.registry;
 
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 /**
  * A bidirectional registry.
  *
@@ -30,4 +33,26 @@ package net.kyori.registry;
  * @param <V> the value type
  */
 public interface BiRegistry<K, V> extends BiRegistryGetter<K, V>, Registry<K, V> {
+  /**
+   * Creates a new bidirectional registry.
+   *
+   * @param <K> the key type
+   * @param <V> the value type
+   * @return a new bidirectional registry
+   */
+  static <K, V> @NonNull BiRegistry<K, V> create() {
+    return new BiRegistryImpl<>();
+  }
+
+  /**
+   * Creates a new bidirectional registry.
+   *
+   * @param expectedSize the expected size
+   * @param <K> the key type
+   * @param <V> the value type
+   * @return a new registry
+   */
+  static <K, V> @NonNull BiRegistry<K, V> create(final @NonNegative int expectedSize) {
+    return new BiRegistryImpl<>(expectedSize);
+  }
 }

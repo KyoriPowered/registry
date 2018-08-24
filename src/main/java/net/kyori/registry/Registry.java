@@ -23,6 +23,7 @@
  */
 package net.kyori.registry;
 
+import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -32,6 +33,29 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @param <V> the value type
  */
 public interface Registry<K, V> extends RegistryGetter<K, V> {
+  /**
+   * Creates a new registry.
+   *
+   * @param <K> the key type
+   * @param <V> the value type
+   * @return a new registry
+   */
+  static <K, V> @NonNull Registry<K, V> create() {
+    return new RegistryImpl<>();
+  }
+
+  /**
+   * Creates a new registry.
+   *
+   * @param expectedSize the expected size
+   * @param <K> the key type
+   * @param <V> the value type
+   * @return a new registry
+   */
+  static <K, V> @NonNull Registry<K, V> create(final @NonNegative int expectedSize) {
+    return new RegistryImpl<>(expectedSize);
+  }
+
   /**
    * Associates {@code key} to {@code value}.
    *

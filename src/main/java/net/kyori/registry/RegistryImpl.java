@@ -24,6 +24,8 @@
 package net.kyori.registry;
 
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Maps;
+import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -42,7 +44,19 @@ import static java.util.Objects.requireNonNull;
  * @param <V> the value type
  */
 public class RegistryImpl<K, V> implements Registry<K, V> {
-  private final Map<K, V> map = new HashMap<>();
+  private final Map<K, V> map;
+
+  public RegistryImpl() {
+    this(new HashMap<>());
+  }
+
+  public RegistryImpl(final @NonNegative int expectedSize) {
+    this(Maps.newHashMapWithExpectedSize(expectedSize));
+  }
+
+  private RegistryImpl(final @NonNull Map<K, V> map) {
+    this.map = map;
+  }
 
   @Override
   public @Nullable V get(final @NonNull K key) {
