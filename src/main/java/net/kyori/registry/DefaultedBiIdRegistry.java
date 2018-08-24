@@ -24,10 +24,10 @@
 package net.kyori.registry;
 
 /**
- * A bidirectional registry with a default key and value.
+ * A bidirectional id registry with a default key and value.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public interface DefaultedBiRegistry<K, V> extends BiRegistry<K, V>, DefaultedBiRegistryGetter<K, V>, DefaultedRegistry<K, V> {
+public interface DefaultedBiIdRegistry<K, V> extends DefaultedBiIdRegistryGetter<K, V>, DefaultedRegistry<K, V>, IdRegistry<K, V> {
 }

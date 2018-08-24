@@ -23,11 +23,30 @@
  */
 package net.kyori.registry;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.OptionalInt;
+
 /**
- * A bidirectional registry with a default key and value.
+ * A read-only view of a map of {@code int} id to {@code V}.
  *
- * @param <K> the key type
  * @param <V> the value type
  */
-public interface DefaultedBiRegistry<K, V> extends BiRegistry<K, V>, DefaultedBiRegistryGetter<K, V>, DefaultedRegistry<K, V> {
+public interface IdMapGetter<V> {
+  /**
+   * Gets the id for {@code value}.
+   *
+   * @param value the value
+   * @return the id
+   */
+  @NonNull OptionalInt id(final @NonNull V value);
+
+  /**
+   * Gets the value for {@code id}.
+   *
+   * @param id the id
+   * @return the value
+   */
+  @Nullable V byId(final int id);
 }
