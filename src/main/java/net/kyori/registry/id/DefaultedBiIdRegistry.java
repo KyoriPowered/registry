@@ -21,7 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id;
+
+import net.kyori.registry.DefaultedRegistry;
 
 /**
  * A bidirectional id registry with a default id, key, and value.

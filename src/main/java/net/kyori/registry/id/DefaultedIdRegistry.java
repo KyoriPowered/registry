@@ -21,13 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id;
+
+import net.kyori.registry.DefaultedRegistry;
 
 /**
- * A bidirectional id registry.
+ * An id registry with a default key and value.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public interface BiIdRegistry<K, V> extends BiIdRegistryGetter<K, V>, BiRegistry<K, V>, IdRegistry<K, V> {
+public interface DefaultedIdRegistry<K, V> extends DefaultedIdRegistryGetter<K, V>, IdRegistry<K, V>, DefaultedRegistry<K, V> {
 }

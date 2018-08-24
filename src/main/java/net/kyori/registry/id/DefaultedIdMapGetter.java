@@ -21,13 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * A read-only view of an id registry.
+ * A read-only view of a map of {@code int} id to {@code V} with a default id.
  *
- * @param <K> the key type
  * @param <V> the value type
  */
-public interface IdRegistryGetter<K, V> extends IdMapGetter<V>, RegistryGetter<K, V> {
+public interface DefaultedIdMapGetter<V> extends IdMapGetter<V> {
+  /**
+   * Gets the id for {@code value}.
+   *
+   * @param value the value
+   * @return the id
+   */
+  int idOrDefault(final @NonNull V value);
 }

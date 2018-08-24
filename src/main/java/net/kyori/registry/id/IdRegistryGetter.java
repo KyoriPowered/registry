@@ -21,41 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import java.util.Iterator;
-import java.util.OptionalInt;
+import net.kyori.registry.RegistryGetter;
 
 /**
- * A read-only view of a map of {@code int} id to {@code V}.
+ * A read-only view of an id registry.
  *
+ * @param <K> the key type
  * @param <V> the value type
  */
-public interface IdMapGetter<V> extends Iterable<V> {
-  /**
-   * Gets the id for {@code value}.
-   *
-   * @param value the value
-   * @return the id
-   */
-  @NonNull OptionalInt id(final @NonNull V value);
-
-  /**
-   * Gets the value for {@code id}.
-   *
-   * @param id the id
-   * @return the value
-   */
-  @Nullable V byId(final int id);
-
-  /**
-   * Creates an unmodifiable iterator of values.
-   *
-   * @return an unmodifiable iterator
-   */
-  @Override
-  @NonNull Iterator<V> iterator();
+public interface IdRegistryGetter<K, V> extends IdMapGetter<V>, RegistryGetter<K, V> {
 }
