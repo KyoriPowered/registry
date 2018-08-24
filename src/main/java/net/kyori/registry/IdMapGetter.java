@@ -26,6 +26,7 @@ package net.kyori.registry;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.Iterator;
 import java.util.OptionalInt;
 
 /**
@@ -33,7 +34,7 @@ import java.util.OptionalInt;
  *
  * @param <V> the value type
  */
-public interface IdMapGetter<V> {
+public interface IdMapGetter<V> extends Iterable<V> {
   /**
    * Gets the id for {@code value}.
    *
@@ -49,4 +50,12 @@ public interface IdMapGetter<V> {
    * @return the value
    */
   @Nullable V byId(final int id);
+
+  /**
+   * Creates an unmodifiable iterator of values.
+   *
+   * @return an unmodifiable iterator
+   */
+  @Override
+  @NonNull Iterator<V> iterator();
 }
