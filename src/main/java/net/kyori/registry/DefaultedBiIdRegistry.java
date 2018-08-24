@@ -24,7 +24,7 @@
 package net.kyori.registry;
 
 /**
- * A bidirectional id registry with a default key and value.
+ * A bidirectional id registry with a default id, key, and value.
  *
  * @param <K> the key type
  * @param <V> the value type
