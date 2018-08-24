@@ -23,48 +23,21 @@
  */
 package net.kyori.registry.id;
 
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import net.kyori.registry.BiRegistryImpl;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * An abstract implementation of a bidirectional id registry with a default id, key, and value.
+ * An abstract implementation of a bidirectional id registry.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public abstract class AbstractDefaultedBiIdRegistry<K, V> extends AbstractBiIdRegistry<K, V> implements DefaultedBiIdRegistry<K, V> {
-  private final K defaultKey;
-  private int defaultId;
-  private @MonotonicNonNull V defaultValue;
-
-  protected AbstractDefaultedBiIdRegistry(final @NonNull K defaultKey) {
-    this.defaultKey = defaultKey;
-  }
-
+public abstract class AbstractBiIdRegistry<K, V> extends BiRegistryImpl<K, V> implements BiIdRegistry<K, V> {
   @Override
-  public int idOrDefault(final @NonNull V value) {
-    return this.id(value).orElse(this.defaultId);
-  }
-
-  @Override
-  public @NonNull K defaultKey() {
-    return this.defaultKey;
-  }
-
-  @Override
-  public @NonNull V getOrDefault(final @NonNull K key) {
-    final @Nullable V value = this.get(key);
-    return value != null ? value : this.defaultValue;
-  }
+  public abstract void register(@NonNull final K key, @NonNull final V value);
 
   @Override
   public void register(final int id, @NonNull final K key, @NonNull final V value) {
-    super.register(id, key, value);
-
-    if(this.defaultKey.equals(key)) {
-      this.defaultId = id;
-      this.defaultValue = value;
-    }
+    super.register(key, value);
   }
 }
