@@ -23,6 +23,7 @@
  */
 package net.kyori.registry.id;
 
+import net.kyori.registry.BiRegistry;
 import net.kyori.registry.DefaultedRegistry;
 
 /**
@@ -31,5 +32,5 @@ import net.kyori.registry.DefaultedRegistry;
  * @param <K> the key type
  * @param <V> the value type
  */
-public interface DefaultedBiIdRegistry<K, V> extends DefaultedBiIdRegistryGetter<K, V>, DefaultedRegistry<K, V>, IdRegistry<K, V> {
+public interface DefaultedBiIdRegistry<K, V> extends BiRegistry<K, V>, DefaultedBiIdRegistryGetter<K, V>, DefaultedRegistry<K, V>, IdRegistry<K, V> {
 }
