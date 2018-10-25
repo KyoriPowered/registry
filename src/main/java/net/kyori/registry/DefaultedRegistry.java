@@ -36,6 +36,7 @@ public interface DefaultedRegistry<K, V> extends DefaultedRegistryGetter<K, V>, 
   /**
    * Creates a new bidirectional registry with a default key.
    *
+   * @param defaultKey the default key
    * @param <K> the key type
    * @param <V> the value type
    * @return a new bidirectional registry
@@ -48,6 +49,7 @@ public interface DefaultedRegistry<K, V> extends DefaultedRegistryGetter<K, V>, 
    * Creates a new bidirectional registry with a default key.
    *
    * @param expectedSize the expected size
+   * @param defaultKey the default key
    * @param <K> the key type
    * @param <V> the value type
    * @return a new registry

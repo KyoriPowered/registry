@@ -61,6 +61,7 @@ public interface Registry<K, V> extends RegistryGetter<K, V> {
    *
    * @param key the key
    * @param value the value
+   * @return the value
    */
-  void register(final @NonNull K key, final @NonNull V value);
+  @NonNull V register(final @NonNull K key, final @NonNull V value);
 }

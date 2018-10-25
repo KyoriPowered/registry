@@ -35,15 +35,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import static java.util.Objects.requireNonNull;
-
 /**
  * A simple implementation of a registry.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public class RegistryImpl<K, V> implements Registry<K, V> {
+public class RegistryImpl<K, V> extends AbstractRegistry<K, V> implements Registry<K, V> {
   private final Map<K, V> map;
 
   public RegistryImpl() {
@@ -64,9 +62,7 @@ public class RegistryImpl<K, V> implements Registry<K, V> {
   }
 
   @Override
-  public void register(final @NonNull K key, final @NonNull V value) {
-    requireNonNull(key, "key");
-    requireNonNull(value, "value");
+  public void register0(final @NonNull K key, final @NonNull V value) {
     this.map.put(key, value);
   }
 

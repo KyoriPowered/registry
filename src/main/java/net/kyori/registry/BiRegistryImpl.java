@@ -34,15 +34,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 
-import static java.util.Objects.requireNonNull;
-
 /**
  * A simple implementation of a bidirectional registry.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public class BiRegistryImpl<K, V> implements BiRegistry<K, V> {
+public class BiRegistryImpl<K, V> extends AbstractRegistry<K, V> implements BiRegistry<K, V> {
   private final BiMap<K, V> map;
 
   public BiRegistryImpl() {
@@ -68,9 +66,7 @@ public class BiRegistryImpl<K, V> implements BiRegistry<K, V> {
   }
 
   @Override
-  public void register(final @NonNull K key, final @NonNull V value) {
-    requireNonNull(key, "key");
-    requireNonNull(value, "value");
+  public void register0(final @NonNull K key, final @NonNull V value) {
     this.map.put(key, value);
   }
 
