@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class BiRegistryTest {
   @Test
   void testGetKey() {
-    final BiRegistry<String, String> registry = new BiRegistryImpl<>();
+    final BiRegistry<String, String> registry = BiRegistry.create();
     assertNull(registry.key("bbb"));
     registry.register("aaa", "bbb");
     assertEquals("aaa", registry.key("bbb"));
@@ -45,7 +45,7 @@ class BiRegistryTest {
 
   @Test
   void testGetValue() {
-    final BiRegistry<String, String> registry = new BiRegistryImpl<>();
+    final BiRegistry<String, String> registry = BiRegistry.create();
     assertNull(registry.get("aaa"));
     registry.register("aaa", "bbb");
     assertEquals("bbb", registry.get("aaa"));
@@ -53,7 +53,7 @@ class BiRegistryTest {
 
   @Test
   void testKeySet() {
-    final BiRegistry<String, String> registry = new BiRegistryImpl<>();
+    final BiRegistry<String, String> registry = BiRegistry.create();
     assertThat(registry.keySet()).isEmpty();
     registry.register("eee", "fff");
     registry.register("aaa", "bbb");
@@ -63,7 +63,7 @@ class BiRegistryTest {
 
   @Test
   void testIterator() {
-    final BiRegistry<String, String> registry = new BiRegistryImpl<>();
+    final BiRegistry<String, String> registry = BiRegistry.create();
     assertThat(ImmutableList.copyOf(registry.iterator())).isEmpty();
     registry.register("eee", "fff");
     registry.register("aaa", "bbb");
@@ -73,7 +73,7 @@ class BiRegistryTest {
 
   @Test
   void testIteratorRemove() {
-    final BiRegistry<String, String> registry = new BiRegistryImpl<>();
+    final BiRegistry<String, String> registry = BiRegistry.create();
     registry.register("aaa", "bbb");
     final Iterator<String> it = registry.iterator();
     assertTrue(it.hasNext());

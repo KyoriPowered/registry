@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class DefaultedRegistryTest {
   @Test
   void testDefaultKeyValue() {
-    final DefaultedRegistry<String, String> registry = new DefaultedRegistryImpl<>("aaa");
+    final DefaultedRegistry<String, String> registry = DefaultedRegistry.create("aaa");
     assertEquals("aaa", registry.defaultKey());
     assertNull(registry.get("aaa"));
     assertNull(registry.get("ccc"));

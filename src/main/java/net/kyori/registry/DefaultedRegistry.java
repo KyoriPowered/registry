@@ -23,7 +23,6 @@
  */
 package net.kyori.registry;
 
-import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -43,18 +42,5 @@ public interface DefaultedRegistry<K, V> extends DefaultedRegistryGetter<K, V>, 
    */
   static <K, V> @NonNull DefaultedRegistry<K, V> create(final @NonNull K defaultKey) {
     return new DefaultedRegistryImpl<>(defaultKey);
-  }
-
-  /**
-   * Creates a new bidirectional registry with a default key.
-   *
-   * @param expectedSize the expected size
-   * @param defaultKey the default key
-   * @param <K> the key type
-   * @param <V> the value type
-   * @return a new registry
-   */
-  static <K, V> @NonNull DefaultedRegistry<K, V> create(final @NonNegative int expectedSize, final @NonNull K defaultKey) {
-    return new DefaultedRegistryImpl<>(expectedSize, defaultKey);
   }
 }

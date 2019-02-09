@@ -23,10 +23,8 @@
  */
 package net.kyori.registry;
 
-import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A simple implementation of a bidirectional registry with a default key and value.
@@ -42,11 +40,6 @@ public class DefaultedBiRegistryImpl<K, V> extends BiRegistryImpl<K, V> implemen
     this.defaultKey = defaultKey;
   }
 
-  public DefaultedBiRegistryImpl(final @NonNegative int expectedSize, final @NonNull K defaultKey) {
-    super(expectedSize);
-    this.defaultKey = defaultKey;
-  }
-
   @Override
   public @NonNull K defaultKey() {
     return this.defaultKey;
@@ -54,12 +47,12 @@ public class DefaultedBiRegistryImpl<K, V> extends BiRegistryImpl<K, V> implemen
 
   @Override
   public @NonNull V getOrDefault(final @NonNull K key) {
-    final @Nullable V value = this.get(key);
+    final /* @Nullable */ V value = this.get(key);
     return value != null ? value : this.defaultValue;
   }
 
   @Override
-  public void register0(@NonNull final K key, @NonNull final V value) {
+  public void register0(final @NonNull K key, final @NonNull V value) {
     super.register0(key, value);
 
     if(this.defaultKey.equals(key)) {

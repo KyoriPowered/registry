@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class DefaultedBiRegistryTest {
   @Test
   void testDefaultKeyValue() {
-    final DefaultedBiRegistry<String, String> registry = new DefaultedBiRegistryImpl<>("aaa");
+    final DefaultedBiRegistry<String, String> registry = DefaultedBiRegistry.create("aaa");
     assertEquals("aaa", registry.defaultKey());
     assertNull(registry.get("aaa"));
     assertNull(registry.get("ccc"));

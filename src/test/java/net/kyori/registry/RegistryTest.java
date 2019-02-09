@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class RegistryTest {
   @Test
   void testGetPut() {
-    final Registry<String, String> registry = new RegistryImpl<>();
+    final Registry<String, String> registry = Registry.create();
     assertNull(registry.get("aaa"));
     registry.register("aaa", "bbb");
     assertEquals("bbb", registry.get("aaa"));
@@ -46,7 +46,7 @@ class RegistryTest {
 
   @Test
   void testKeySet() {
-    final Registry<String, String> registry = new RegistryImpl<>();
+    final Registry<String, String> registry = Registry.create();
     assertThat(registry.keySet()).isEmpty();
     registry.register("eee", "fff");
     registry.register("aaa", "bbb");
@@ -56,7 +56,7 @@ class RegistryTest {
 
   @Test
   void testIterator() {
-    final Registry<String, String> registry = new RegistryImpl<>();
+    final Registry<String, String> registry = Registry.create();
     assertThat(ImmutableList.copyOf(registry.iterator())).isEmpty();
     registry.register("eee", "fff");
     registry.register("aaa", "bbb");
@@ -66,7 +66,7 @@ class RegistryTest {
 
   @Test
   void testIteratorRemove() {
-    final Registry<String, String> registry = new RegistryImpl<>();
+    final Registry<String, String> registry = Registry.create();
     registry.register("aaa", "bbb");
     final Iterator<String> it = registry.iterator();
     assertTrue(it.hasNext());
@@ -76,7 +76,7 @@ class RegistryTest {
 
   @Test
   void testStream() {
-    final Registry<String, String> registry = new RegistryImpl<>();
+    final Registry<String, String> registry = Registry.create();
     assertThat(registry.stream()).isEmpty();
     registry.register("eee", "fff");
     registry.register("aaa", "bbb");
