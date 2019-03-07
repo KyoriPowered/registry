@@ -48,7 +48,7 @@ public class RegistryImpl<K, V> extends AbstractRegistry<K, V> implements Regist
   }
 
   @Override
-  public void register0(final @NonNull K key, final @NonNull V value) {
+  protected void register0(final @NonNull K key, final @NonNull V value) {
     this.map.put(key, value);
   }
 

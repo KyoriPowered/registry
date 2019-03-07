@@ -52,7 +52,7 @@ public class DefaultedBiRegistryImpl<K, V> extends BiRegistryImpl<K, V> implemen
   }
 
   @Override
-  public void register0(final @NonNull K key, final @NonNull V value) {
+  protected void register0(final @NonNull K key, final @NonNull V value) {
     super.register0(key, value);
 
     if(this.defaultKey.equals(key)) {
