@@ -21,30 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id.map;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import static java.util.Objects.requireNonNull;
+import java.util.OptionalInt;
+import java.util.function.IntPredicate;
 
 /**
- * An abstract implementation of a registry.
+ * A simple implementation of an id map.
  *
- * @param <K> the key type
  * @param <V> the value type
  */
-public abstract class AbstractRegistry<K, V> implements Registry<K, V> {
-  @Override
-  public final @NonNull V register(final @NonNull K key, @NonNull V value) {
-    requireNonNull(key, "key");
-    requireNonNull(value, "value");
-    value = this.register0(key, value);
-    this.registered(key, value);
-    return value;
+public class IdMapImpl<V> extends AbstractIdMap<V> {
+  private final IntPredicate empty;
+
+  public IdMapImpl(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
+    super(idToV, vToId);
+    this.empty = empty;
   }
 
-  protected abstract @NonNull V register0(final @NonNull K key, final @NonNull V value);
-
-  protected void registered(final @NonNull K key, final @NonNull V value) {
+  @Override
+  public @NonNull OptionalInt id(final @NonNull V value) {
+    final int id = this.vToId.getInt(value);
+    if(!this.empty.test(id)) {
+      return OptionalInt.of(id);
+    }
+    return OptionalInt.empty();
   }
 }

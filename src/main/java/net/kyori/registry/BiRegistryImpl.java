@@ -53,8 +53,9 @@ public class BiRegistryImpl<K, V> extends AbstractRegistry<K, V> implements BiRe
   }
 
   @Override
-  protected void register0(final @NonNull K key, final @NonNull V value) {
+  protected @NonNull V register0(final @NonNull K key, final @NonNull V value) {
     this.map.put(key, value);
+    return value;
   }
 
   @Override

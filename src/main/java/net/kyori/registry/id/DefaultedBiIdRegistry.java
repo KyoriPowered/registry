@@ -21,30 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id;
 
+import net.kyori.registry.DefaultedRegistry;
+import net.kyori.registry.id.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import static java.util.Objects.requireNonNull;
-
 /**
- * An abstract implementation of a registry.
+ * A bidirectional id registry with a default id, key, and value.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public abstract class AbstractRegistry<K, V> implements Registry<K, V> {
-  @Override
-  public final @NonNull V register(final @NonNull K key, @NonNull V value) {
-    requireNonNull(key, "key");
-    requireNonNull(value, "value");
-    value = this.register0(key, value);
-    this.registered(key, value);
-    return value;
-  }
-
-  protected abstract @NonNull V register0(final @NonNull K key, final @NonNull V value);
-
-  protected void registered(final @NonNull K key, final @NonNull V value) {
+public interface DefaultedBiIdRegistry<K, V> extends DefaultedBiIdRegistryGetter<K, V>, DefaultedRegistry<K, V>, IdRegistry<K, V> {
+  /**
+   * Creates a bidirectional id registry.
+   *
+   * @param ids the id map
+   * @param defaultKey the default key
+   * @param <K> the key type
+   * @param <V> the value type
+   * @return a new bidirectional id registry
+   */
+  static <K, V> @NonNull DefaultedBiIdRegistry<K, V> create(final @NonNull IncrementalIdMap<V> ids, final @NonNull K defaultKey) {
+    return new DefaultedBiIdRegistryImpl<>(ids, defaultKey);
   }
 }

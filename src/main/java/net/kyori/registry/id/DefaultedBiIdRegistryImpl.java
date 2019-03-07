@@ -21,45 +21,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id;
 
-import com.google.common.collect.Iterators;
+import net.kyori.registry.DefaultedBiRegistryImpl;
+import net.kyori.registry.id.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.OptionalInt;
 
-/**
- * A simple implementation of a registry.
- *
- * @param <K> the key type
- * @param <V> the value type
- */
-public class RegistryImpl<K, V> extends AbstractRegistry<K, V> implements Registry<K, V> {
-  private final Map<K, V> map = new HashMap<>();
+public class DefaultedBiIdRegistryImpl<K, V> extends DefaultedBiRegistryImpl<K, V> implements DefaultedBiIdRegistry<K, V> {
+  private final IncrementalIdMap<V> ids;
+  private int defaultId;
 
-  @Override
-  public @Nullable V get(final @NonNull K key) {
-    return this.map.get(key);
+  public DefaultedBiIdRegistryImpl(final @NonNull IncrementalIdMap<V> ids, final @NonNull K defaultKey) {
+    super(defaultKey);
+    this.ids = ids;
   }
 
   @Override
   protected @NonNull V register0(final @NonNull K key, final @NonNull V value) {
-    this.map.put(key, value);
+    return this.register(this.ids.next(), key, value);
+  }
+
+  @Override
+  public @NonNull V register(final int id, final @NonNull K key, @NonNull V value) {
+    this.ids.put(id, value);
+    value = super.register0(key, value);
+    this.registered(key, value);
     return value;
   }
 
   @Override
-  public @NonNull Set<K> keySet() {
-    return Collections.unmodifiableSet(this.map.keySet());
+  protected void defaultRegistered(@NonNull final K key, @NonNull final V value) {
+    super.defaultRegistered(key, value);
+    this.defaultId = this.id(value).orElseThrow(() -> new IllegalStateException("This shouldn't happen!"));
   }
 
   @Override
-  public @NonNull Iterator<V> iterator() {
-    return Iterators.unmodifiableIterator(this.map.values().iterator());
+  public @NonNull OptionalInt id(final @NonNull V value) {
+    return this.ids.id(value);
+  }
+
+  @Override
+  public int idOrDefault(final @NonNull V value) {
+    final OptionalInt id = this.id(value);
+    return id.isPresent() ? id.getAsInt() : this.defaultId;
+  }
+
+  @Override
+  public @Nullable V byId(final int id) {
+    final V value = this.ids.get(id);
+    return value != null ? value : this.defaultValue;
   }
 }

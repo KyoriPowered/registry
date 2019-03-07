@@ -21,30 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id.map;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.junit.jupiter.api.Test;
 
-import static java.util.Objects.requireNonNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * An abstract implementation of a registry.
- *
- * @param <K> the key type
- * @param <V> the value type
- */
-public abstract class AbstractRegistry<K, V> implements Registry<K, V> {
-  @Override
-  public final @NonNull V register(final @NonNull K key, @NonNull V value) {
-    requireNonNull(key, "key");
-    requireNonNull(value, "value");
-    value = this.register0(key, value);
-    this.registered(key, value);
-    return value;
-  }
+class IncrementalIdMapImplTest {
+  private static final int DEFAULT = -1000;
+  private final IncrementalIdMap<String> map = IncrementalIdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
+    {
+      this.defaultReturnValue(DEFAULT);
+    }
+  }, value -> value == -1000);
 
-  protected abstract @NonNull V register0(final @NonNull K key, final @NonNull V value);
-
-  protected void registered(final @NonNull K key, final @NonNull V value) {
+  @Test
+  void testPut() {
+    final int i0 = this.map.put("abc");
+    assertEquals(0, i0);
+    assertEquals("abc", this.map.get(i0));
+    final int i1 = this.map.put("def");
+    assertEquals(1, i1);
+    assertEquals("def", this.map.get(i1));
+    assertEquals("abc", this.map.get(i0));
   }
 }

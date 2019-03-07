@@ -21,30 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id.map;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.junit.jupiter.api.Test;
 
-import static java.util.Objects.requireNonNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-/**
- * An abstract implementation of a registry.
- *
- * @param <K> the key type
- * @param <V> the value type
- */
-public abstract class AbstractRegistry<K, V> implements Registry<K, V> {
-  @Override
-  public final @NonNull V register(final @NonNull K key, @NonNull V value) {
-    requireNonNull(key, "key");
-    requireNonNull(value, "value");
-    value = this.register0(key, value);
-    this.registered(key, value);
-    return value;
+class IdMapImplTest {
+  private static final int DEFAULT = -1000;
+  private final IdMap<String> map = IdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
+    {
+      this.defaultReturnValue(DEFAULT);
+    }
+  }, value -> value == -1000);
+
+  @Test
+  void testId() {
+    assertFalse(this.map.id("foo").isPresent());
+    this.map.put(32, "foo");
+    assertEquals(32, this.map.id("foo").orElse(DEFAULT));
   }
 
-  protected abstract @NonNull V register0(final @NonNull K key, final @NonNull V value);
-
-  protected void registered(final @NonNull K key, final @NonNull V value) {
+  @Test
+  void testGet() {
+    assertNull(this.map.get(32));
+    this.map.put(32, "foo");
+    assertEquals("foo", this.map.get(32));
   }
 }

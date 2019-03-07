@@ -21,30 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id.map;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import static java.util.Objects.requireNonNull;
+import java.util.function.IntPredicate;
 
 /**
- * An abstract implementation of a registry.
+ * An incremental id map.
  *
- * @param <K> the key type
  * @param <V> the value type
  */
-public abstract class AbstractRegistry<K, V> implements Registry<K, V> {
-  @Override
-  public final @NonNull V register(final @NonNull K key, @NonNull V value) {
-    requireNonNull(key, "key");
-    requireNonNull(value, "value");
-    value = this.register0(key, value);
-    this.registered(key, value);
-    return value;
+public interface IncrementalIdMap<V> extends IdMap<V> {
+  /**
+   * Creates an incremental id map.
+   *
+   * @param idToV the id to value map
+   * @param vToId the value to id map
+   * @param empty emptiness checker
+   * @param <V> the value type
+   * @return an incremental id map
+   */
+  static <V> @NonNull IncrementalIdMap<V> create(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
+    return new IncrementalIdMapImpl<>(idToV, vToId, empty);
   }
 
-  protected abstract @NonNull V register0(final @NonNull K key, final @NonNull V value);
+  /**
+   * Gets the next id.
+   *
+   * @return the next id
+   */
+  int next();
 
-  protected void registered(final @NonNull K key, final @NonNull V value) {
-  }
+  /**
+   * Associates {@code value} with the next available id.
+   *
+   * @param value the value
+   * @return the id
+   */
+  int put(final @NonNull V value);
 }

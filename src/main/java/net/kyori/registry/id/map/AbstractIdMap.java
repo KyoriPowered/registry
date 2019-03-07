@@ -21,30 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id.map;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
-import static java.util.Objects.requireNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * An abstract implementation of a registry.
+ * An abstract implementation of an id map.
  *
- * @param <K> the key type
  * @param <V> the value type
  */
-public abstract class AbstractRegistry<K, V> implements Registry<K, V> {
+public abstract class AbstractIdMap<V> implements IdMap<V> {
+  protected final Int2ObjectMap<V> idToV;
+  protected final Object2IntMap<V> vToId;
+
+  protected AbstractIdMap(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId) {
+    this.idToV = idToV;
+    this.vToId = vToId;
+  }
+
   @Override
-  public final @NonNull V register(final @NonNull K key, @NonNull V value) {
-    requireNonNull(key, "key");
-    requireNonNull(value, "value");
-    value = this.register0(key, value);
-    this.registered(key, value);
+  public final @NonNull V put(final int id, final @NonNull V value) {
+    this.put0(id, value);
     return value;
   }
 
-  protected abstract @NonNull V register0(final @NonNull K key, final @NonNull V value);
+  protected void put0(final int id, final @NonNull V value) {
+    this.idToV.put(id, value);
+    this.vToId.put(value, id);
+  }
 
-  protected void registered(final @NonNull K key, final @NonNull V value) {
+  @Override
+  public @Nullable V get(final int id) {
+    return this.idToV.get(id);
   }
 }

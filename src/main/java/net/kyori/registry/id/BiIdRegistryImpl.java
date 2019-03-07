@@ -21,30 +21,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id;
 
+import net.kyori.registry.BiRegistryImpl;
+import net.kyori.registry.id.BiIdRegistry;
+import net.kyori.registry.id.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import static java.util.Objects.requireNonNull;
+import java.util.OptionalInt;
 
-/**
- * An abstract implementation of a registry.
- *
- * @param <K> the key type
- * @param <V> the value type
- */
-public abstract class AbstractRegistry<K, V> implements Registry<K, V> {
+public class BiIdRegistryImpl<K, V> extends BiRegistryImpl<K, V> implements BiIdRegistry<K, V> {
+  private final IncrementalIdMap<V> ids;
+
+  public BiIdRegistryImpl(final @NonNull IncrementalIdMap<V> ids) {
+    this.ids = ids;
+  }
+
   @Override
-  public final @NonNull V register(final @NonNull K key, @NonNull V value) {
-    requireNonNull(key, "key");
-    requireNonNull(value, "value");
-    value = this.register0(key, value);
-    this.registered(key, value);
+  protected @NonNull V register0(final @NonNull K key, final @NonNull V value) {
+    return this.register(this.ids.next(), key, value);
+  }
+
+  @Override
+  public @NonNull V register(final int id, final @NonNull K key, final @NonNull V value) {
+    super.register0(key, value);
+    this.ids.put(id, value);
     return value;
   }
 
-  protected abstract @NonNull V register0(final @NonNull K key, final @NonNull V value);
+  @Override
+  public @NonNull OptionalInt id(final @NonNull V value) {
+    return this.ids.id(value);
+  }
 
-  protected void registered(final @NonNull K key, final @NonNull V value) {
+  @Override
+  public @Nullable V byId(final int id) {
+    return this.ids.get(id);
   }
 }

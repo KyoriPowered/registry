@@ -21,30 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id.map;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import static java.util.Objects.requireNonNull;
+import java.util.OptionalInt;
 
 /**
- * An abstract implementation of a registry.
+ * A readable id map.
  *
- * @param <K> the key type
  * @param <V> the value type
  */
-public abstract class AbstractRegistry<K, V> implements Registry<K, V> {
-  @Override
-  public final @NonNull V register(final @NonNull K key, @NonNull V value) {
-    requireNonNull(key, "key");
-    requireNonNull(value, "value");
-    value = this.register0(key, value);
-    this.registered(key, value);
-    return value;
-  }
+public interface IdMapGetter<V> {
+  /**
+   * Gets the id for {@code value}.
+   *
+   * @param value the value
+   * @return the id
+   */
+  @NonNull OptionalInt id(final @NonNull V value);
 
-  protected abstract @NonNull V register0(final @NonNull K key, final @NonNull V value);
-
-  protected void registered(final @NonNull K key, final @NonNull V value) {
-  }
+  /**
+   * Gets a value by its id.
+   *
+   * @param id the id
+   * @return the value
+   */
+  @Nullable V get(final int id);
 }
