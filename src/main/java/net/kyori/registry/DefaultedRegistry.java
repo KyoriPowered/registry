@@ -31,7 +31,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @param <K> the key type
  * @param <V> the value type
  */
-public interface DefaultedRegistry<K, V> extends DefaultedRegistryGetter<K, V>, Registry<K, V> {
+public interface DefaultedRegistry<K, V> extends DefaultedRegistryView<K, V>, Registry<K, V> {
   /**
    * Creates a new bidirectional registry with a default key.
    *

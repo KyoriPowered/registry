@@ -21,13 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id;
+
+import net.kyori.registry.DefaultedRegistryView;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * A read-only view of a bidirectional registry with a default key and value.
+ * A read-only view of an id registry with a default key and value.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public interface DefaultedBiRegistryGetter<K, V> extends BiRegistryGetter<K, V>, DefaultedRegistryGetter<K, V> {
+public interface DefaultedIdRegistryView<K, V> extends DefaultedRegistryView<K, V>, IdRegistryView<K, V> {
+  /**
+   * Gets the id for {@code value}.
+   *
+   * @param value the value
+   * @return the id
+   */
+  int idOrDefault(final @NonNull V value);
 }

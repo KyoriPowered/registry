@@ -31,5 +31,5 @@ import net.kyori.registry.DefaultedRegistry;
  * @param <K> the key type
  * @param <V> the value type
  */
-public interface DefaultedIdRegistry<K, V> extends DefaultedIdRegistryGetter<K, V>, DefaultedRegistry<K, V>, IdRegistry<K, V> {
+public interface DefaultedIdRegistry<K, V> extends DefaultedIdRegistryView<K, V>, DefaultedRegistry<K, V>, IdRegistry<K, V> {
 }

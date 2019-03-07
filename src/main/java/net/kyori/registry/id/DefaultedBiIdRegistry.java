@@ -33,7 +33,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @param <K> the key type
  * @param <V> the value type
  */
-public interface DefaultedBiIdRegistry<K, V> extends DefaultedBiIdRegistryGetter<K, V>, DefaultedRegistry<K, V>, IdRegistry<K, V> {
+public interface DefaultedBiIdRegistry<K, V> extends DefaultedBiIdRegistryView<K, V>, DefaultedRegistry<K, V>, IdRegistry<K, V> {
   /**
    * Creates a bidirectional id registry.
    *

@@ -23,51 +23,11 @@
  */
 package net.kyori.registry;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import java.util.Iterator;
-import java.util.Set;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
 /**
- * A read-only view of a registry.
+ * A read-only view of a bidirectional registry with a default key and value.
  *
  * @param <K> the key type
  * @param <V> the value type
- * @see Registry
  */
-public interface RegistryGetter<K, V> extends Iterable<V> {
-  /**
-   * Gets the value for {@code key}.
-   *
-   * @param key the key
-   * @return the value
-   */
-  @Nullable V get(final @NonNull K key);
-
-  /**
-   * Gets a set of the keys contained in this registry.
-   *
-   * @return a set of the keys contained in this registry
-   */
-  @NonNull Set<K> keySet();
-
-  /**
-   * Creates an unmodifiable iterator of values.
-   *
-   * @return an unmodifiable iterator
-   */
-  @Override
-  @NonNull Iterator<V> iterator();
-
-  /**
-   * Creates a stream of values.
-   *
-   * @return a stream
-   */
-  default @NonNull Stream<V> stream() {
-    return StreamSupport.stream(this.spliterator(), false);
-  }
+public interface DefaultedBiRegistryView<K, V> extends BiRegistryView<K, V>, DefaultedRegistryView<K, V> {
 }

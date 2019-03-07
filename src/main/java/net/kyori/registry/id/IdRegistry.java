@@ -31,7 +31,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @param <K> the key type
  * @param <V> the value type
  */
-public interface IdRegistry<K, V> extends IdRegistryGetter<K, V> {
+public interface IdRegistry<K, V> extends IdRegistryView<K, V> {
   /**
    * Associates {@code id} and {@code key} to {@code value}.
    *

@@ -21,23 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import net.kyori.registry.BiRegistryView;
 
 /**
- * A read-only view of a bidirectional registry.
+ * A read-only view of a bidirectional id registry.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public interface BiRegistryGetter<K, V> extends RegistryGetter<K, V> {
-  /**
-   * Gets the key for {@code value}.
-   *
-   * @param value the value
-   * @return the key
-   */
-  @Nullable K key(final @NonNull V value);
+public interface BiIdRegistryView<K, V> extends BiRegistryView<K, V>, IdRegistryView<K, V> {
 }

@@ -31,7 +31,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @param <K> the key type
  * @param <V> the value type
  */
-public interface Registry<K, V> extends RegistryGetter<K, V> {
+public interface Registry<K, V> extends RegistryView<K, V> {
   /**
    * Creates a new registry.
    *
