@@ -21,43 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.impl.id;
+package net.kyori.registry.impl;
 
-import net.kyori.registry.api.IdentifiableRegistry;
-import net.kyori.registry.api.Registry;
-import net.kyori.registry.api.defaultable.DefaultableIdentifier;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import net.kyori.registry.api.BidirectionalRegistry;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
-import java.util.OptionalInt;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * A {@link DefaultableIdentifiableRegistry} is a container for a {@link IdentifiableRegistry} which itself is a
- * container for a {@link Registry} which permits IDs with each entry.
+ * An extension of the {@link RegistryImpl} implementation, but also implementing a {@link BidirectionalRegistry}
+ * to create a bidirectional key-to-value map.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public final class DefaultableIdentifiableRegistry<K, V> implements DefaultableIdentifier<V> {
-    private IdentifiableRegistry<K, V> registry;
-    private int defaultId;
-
-    public DefaultableIdentifiableRegistry(IdentifiableRegistry<K, V> registry) {
-        registry.getRegistry().addRegistrationListener((key, value) ->
-                this.defaultId = registry.id(value).orElseThrow(() ->
-                        new IllegalStateException("This shouldn't happen!")
-                )
-        );
-
-        this.registry = registry;
+public class BidirectionalRegistryImpl<K, V> extends RegistryImpl<K, V> implements BidirectionalRegistry<K, V> {
+    public BidirectionalRegistryImpl() {
+        this(HashBiMap.create());
     }
 
-    public final IdentifiableRegistry<K, V> getRegistry() {
-        return registry;
+    public BidirectionalRegistryImpl(BiMap<K, V> map) {
+        super(map);
     }
 
+    @Nullable
     @Override
-    public int idOrDefault(@NonNull V value) {
-        final OptionalInt id = registry.id(value);
-        return id.isPresent() ? id.getAsInt() : this.defaultId;
+    public K key(@NonNull V value) {
+        BiMap<K, V> cast = (HashBiMap<K, V>) map;
+        return cast.inverse().get(value);
     }
 }

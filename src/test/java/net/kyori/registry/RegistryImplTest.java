@@ -24,7 +24,8 @@
 package net.kyori.registry;
 
 import com.google.common.collect.ImmutableList;
-import net.kyori.registry.impl.nonid.UniRegistry;
+import net.kyori.registry.api.Registry;
+import net.kyori.registry.impl.RegistryImpl;
 import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
@@ -39,15 +40,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class RegistryImplTest {
   @Test
   void testGetPut() {
-    final UniRegistry<String, String> registryImpl = new UniRegistry<>();
-    assertNull(registryImpl.get("aaa"));
-    registryImpl.register("aaa", "bbb");
-    assertEquals("bbb", registryImpl.get("aaa"));
+    final Registry<String, String> registry = Registry.create();
+    assertNull(registry.get("aaa"));
+    registry.register("aaa", "bbb");
+    assertEquals("bbb", registry.get("aaa"));
   }
 
   @Test
   void testKeySet() {
-    final UniRegistry<String, String> registryImpl = new UniRegistry<>();
+    final RegistryImpl<String, String> registryImpl = new RegistryImpl<>();
     assertThat(registryImpl.keySet()).isEmpty();
     registryImpl.register("eee", "fff");
     registryImpl.register("aaa", "bbb");
@@ -57,7 +58,7 @@ class RegistryImplTest {
 
   @Test
   void testIterator() {
-    final UniRegistry<String, String> registryImpl = new UniRegistry<>();
+    final RegistryImpl<String, String> registryImpl = new RegistryImpl<>();
     assertThat(ImmutableList.copyOf(registryImpl.iterator())).isEmpty();
     registryImpl.register("eee", "fff");
     registryImpl.register("aaa", "bbb");
@@ -67,7 +68,7 @@ class RegistryImplTest {
 
   @Test
   void testIteratorRemove() {
-    final UniRegistry<String, String> registryImpl = new UniRegistry<>();
+    final RegistryImpl<String, String> registryImpl = new RegistryImpl<>();
     registryImpl.register("aaa", "bbb");
     final Iterator<String> it = registryImpl.iterator();
     assertTrue(it.hasNext());
@@ -77,7 +78,7 @@ class RegistryImplTest {
 
   @Test
   void testStream() {
-    final UniRegistry<String, String> registryImpl = new UniRegistry<>();
+    final RegistryImpl<String, String> registryImpl = new RegistryImpl<>();
     assertThat(registryImpl.stream()).isEmpty();
     registryImpl.register("eee", "fff");
     registryImpl.register("aaa", "bbb");

@@ -1,16 +1,17 @@
-package net.kyori.registry.api;
+package net.kyori.registry.impl;
 
+import net.kyori.registry.api.Registry;
 import net.kyori.registry.api.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.OptionalInt;
 
-public abstract class IdentifiableRegistry<K, V> {
+public class IdentifiableRegistryImpl<K, V> {
     private final Registry<K, V> registry;
     protected final IncrementalIdMap<V> ids;
 
-    public IdentifiableRegistry(final @NonNull Registry<K, V> registry, final @NonNull IncrementalIdMap<V> ids) {
+    public IdentifiableRegistryImpl(final @NonNull Registry<K, V> registry, final @NonNull IncrementalIdMap<V> ids) {
         this.registry = registry;
         this.ids = ids;
     }
@@ -19,9 +20,14 @@ public abstract class IdentifiableRegistry<K, V> {
         return registry;
     }
 
+    public @NonNull V register(final @NonNull K key, @NonNull V value) {
+        return register(ids.next(), key, value);
+    }
+
     public @NonNull V register(final int id, final @NonNull K key, @NonNull V value) {
         ids.put(id, value);
-        return getRegistry().register(key, value);
+        getRegistry().register(key, value);
+        return value;
     }
 
     /**
@@ -30,7 +36,9 @@ public abstract class IdentifiableRegistry<K, V> {
      * @param value the value
      * @return the id
      */
-    public abstract @NonNull OptionalInt id(final @NonNull V value);
+    public @NonNull OptionalInt id(final @NonNull V value) {
+        return this.ids.id(value);
+    }
 
     /**
      * Gets the value for {@code id}.
@@ -38,5 +46,7 @@ public abstract class IdentifiableRegistry<K, V> {
      * @param id the id
      * @return the value
      */
-    public abstract @Nullable V byId(final int id);
+    public @Nullable V byId(final int id) {
+        return this.ids.get(id);
+    }
 }

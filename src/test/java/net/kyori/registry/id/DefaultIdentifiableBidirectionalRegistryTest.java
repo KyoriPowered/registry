@@ -25,11 +25,10 @@ package net.kyori.registry.id;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.kyori.registry.api.IdentifiableRegistry;
+import net.kyori.registry.api.BidirectionalRegistry;
 import net.kyori.registry.api.map.IncrementalIdMap;
-import net.kyori.registry.impl.id.DefaultableIdentifiableRegistry;
-import net.kyori.registry.impl.id.IdentifiableRegistryImpl;
-import net.kyori.registry.impl.nonid.BidiRegistry;
+import net.kyori.registry.impl.DefaultableIdentifiableRegistryImpl;
+import net.kyori.registry.impl.BidirectionalRegistryImpl;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -38,43 +37,45 @@ import java.util.concurrent.ThreadLocalRandom;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class DefaultedBiIdRegistryImplImplTest {
+class DefaultIdentifiableBidirectionalRegistryTest {
   private static final int DEFAULT = -1000;
-  private final DefaultableIdentifiableRegistry<String, String> container = new DefaultableIdentifiableRegistry<>(
-          new IdentifiableRegistryImpl<>(
-                  new BidiRegistry<>(),
-                  IncrementalIdMap.create(
-                          new Int2ObjectOpenHashMap<>(),
-                          new Object2IntOpenHashMap<String>() {{
-                            this.defaultReturnValue(DEFAULT);
-                          }},
-                          value -> value == DEFAULT
-                  )
+
+  private final DefaultableIdentifiableRegistryImpl<String, String> container = new DefaultableIdentifiableRegistryImpl<>(
+          new BidirectionalRegistryImpl<>(),
+          "_default",
+          IncrementalIdMap.create(
+                  new Int2ObjectOpenHashMap<>(),
+                  new Object2IntOpenHashMap<String>() {{
+                    this.defaultReturnValue(DEFAULT);
+                  }},
+                  value -> value == DEFAULT
           )
   );
 
   @Test
   void testRegister() {
-    final IdentifiableRegistry<String, String> identifiable = container.getRegistry();
-    final BidiRegistry<String, String> registry = (BidiRegistry<String, String>) identifiable.getRegistry();
+    assertNull(container.getRegistry().get("_default"));
 
-    assertNull(registry.get("foo"));
-    assertEquals(DEFAULT, container.getRegistry().id("bar").orElse(DEFAULT));
-    identifiable.register(32, "foo", "bar");
-    assertEquals("bar", registry.get("foo"));
-    assertEquals("foo", registry.key("bar"));
-    assertEquals(32, identifiable.id("bar").orElse(DEFAULT));
+    BidirectionalRegistry<String, String> registry = (BidirectionalRegistry<String, String>) container.getRegistry();
+
+    assertEquals(DEFAULT, container.id("bar").orElse(DEFAULT));
+
+    container.register(32, "_default", "bar");
+
+    assertEquals("bar", registry.get("_default"));
+    assertEquals("_default", registry.key("bar"));
+    assertEquals(32, container.id("bar").orElse(DEFAULT));
 
     // default is now in, let's check
     assertEquals(32, container.idOrDefault(UUID.randomUUID().toString()));
-    assertEquals("bar", identifiable.byId(ThreadLocalRandom.current().nextInt()));
+    assertEquals("bar", container.byId(ThreadLocalRandom.current().nextInt()));
 
     // check incremental
     assertNull(registry.get("abc"));
-    registry.register("abc", "def");
+    container.register("abc", "def");
     assertEquals("def", registry.get("abc"));
     assertEquals("abc", registry.key("def"));
-    assertEquals(33, identifiable.id("def").orElse(DEFAULT));
-    assertEquals("def", identifiable.byId(33));
+    assertEquals(33, container.id("def").orElse(DEFAULT));
+    assertEquals("def", container.byId(33));
   }
 }

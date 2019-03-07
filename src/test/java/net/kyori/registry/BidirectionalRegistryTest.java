@@ -24,7 +24,7 @@
 package net.kyori.registry;
 
 import com.google.common.collect.ImmutableList;
-import net.kyori.registry.impl.nonid.BidiRegistry;
+import net.kyori.registry.api.BidirectionalRegistry;
 import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
@@ -35,10 +35,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class BidiRegistryImplTest {
+class BidirectionalRegistryTest {
   @Test
   void testGetKey() {
-    final BidiRegistry<String, String> registry = new BidiRegistry<>();
+    final BidirectionalRegistry<String, String> registry = BidirectionalRegistry.create();
     assertNull(registry.key("bbb"));
     registry.register("aaa", "bbb");
     assertEquals("aaa", registry.key("bbb"));
@@ -46,7 +46,7 @@ class BidiRegistryImplTest {
 
   @Test
   void testGetValue() {
-    final BidiRegistry<String, String> registry = new BidiRegistry<>();
+    final BidirectionalRegistry<String, String> registry = BidirectionalRegistry.create();
     assertNull(registry.get("aaa"));
     registry.register("aaa", "bbb");
     assertEquals("bbb", registry.get("aaa"));
@@ -54,7 +54,7 @@ class BidiRegistryImplTest {
 
   @Test
   void testKeySet() {
-    final BidiRegistry<String, String> registry = new BidiRegistry<>();
+    final BidirectionalRegistry<String, String> registry = BidirectionalRegistry.create();
     assertThat(registry.keySet()).isEmpty();
     registry.register("eee", "fff");
     registry.register("aaa", "bbb");
@@ -64,7 +64,7 @@ class BidiRegistryImplTest {
 
   @Test
   void testIterator() {
-    final BidiRegistry<String, String> registry = new BidiRegistry<>();
+    final BidirectionalRegistry<String, String> registry = BidirectionalRegistry.create();
     assertThat(ImmutableList.copyOf(registry.iterator())).isEmpty();
     registry.register("eee", "fff");
     registry.register("aaa", "bbb");
@@ -74,7 +74,7 @@ class BidiRegistryImplTest {
 
   @Test
   void testIteratorRemove() {
-    final BidiRegistry<String, String> registry = new BidiRegistry<>();
+    final BidirectionalRegistry<String, String> registry = BidirectionalRegistry.create();
     registry.register("aaa", "bbb");
     final Iterator<String> it = registry.iterator();
     assertTrue(it.hasNext());

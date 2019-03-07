@@ -25,19 +25,19 @@ package net.kyori.registry.id;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.kyori.registry.api.Registry;
+import net.kyori.registry.api.BidirectionalRegistry;
 import net.kyori.registry.api.map.IncrementalIdMap;
-import net.kyori.registry.impl.id.IdentifiableRegistryImpl;
-import net.kyori.registry.impl.nonid.BidiRegistry;
+import net.kyori.registry.impl.BidirectionalRegistryImpl;
+import net.kyori.registry.impl.IdentifiableRegistryImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class BiIdRegistryImplImplTest {
+class IdentifiableBidirectionalRegistryTest {
   private static final int DEFAULT = -1000;
 
-  private final IdentifiableRegistryImpl<String, String> container = new IdentifiableRegistryImpl<>(new BidiRegistry<>(), IncrementalIdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
+  private final IdentifiableRegistryImpl<String, String> container = new IdentifiableRegistryImpl<>(new BidirectionalRegistryImpl<>(), IncrementalIdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
     {
       this.defaultReturnValue(DEFAULT);
     }
@@ -45,7 +45,7 @@ class BiIdRegistryImplImplTest {
 
   @Test
   void testRegister() {
-    final BidiRegistry<String, String> registry = (BidiRegistry<String, String>) container.getRegistry();
+    BidirectionalRegistry<String, String> registry = (BidirectionalRegistry<String, String>) container.getRegistry();
 
     assertNull(registry.get("foo"));
     assertEquals(DEFAULT, container.id("bar").orElse(DEFAULT));
@@ -56,7 +56,7 @@ class BiIdRegistryImplImplTest {
 
     // check incremental
     assertNull(registry.get("abc"));
-    registry.register("abc", "def");
+    container.register("abc", "def");
     assertEquals("def", registry.get("abc"));
     assertEquals("abc", registry.key("def"));
     assertEquals(33, container.id("def").orElse(DEFAULT));

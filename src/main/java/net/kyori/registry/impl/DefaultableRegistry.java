@@ -25,22 +25,24 @@ package net.kyori.registry.impl;
 
 import net.kyori.registry.api.Registry;
 import net.kyori.registry.api.defaultable.Defaultable;
-import net.kyori.registry.impl.nonid.UniRegistry;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.Iterator;
+import java.util.Set;
+import java.util.function.BiConsumer;
 
 /**
- * A {@link DefaultableRegistry} is an extension of a {@link UniRegistry}. This type of registry provides
+ * A {@link DefaultableRegistry} is an extension of a {@link RegistryImpl}. This type of registry provides
  * a default values, as registered, for missing keys.
  *
  * @param <K> the key type
  * @param <V> the value type
- * @param <T> the {@link UniRegistry} type
  */
-public class DefaultableRegistry<K, V> implements Defaultable<K, V> {
+public class DefaultableRegistry<K, V> implements Registry<K, V>, Defaultable<K, V> {
     private final Registry<K, V> registry;
     private final K defaultKey;
-
     @MonotonicNonNull
     private V defaultValue;
 
@@ -60,6 +62,32 @@ public class DefaultableRegistry<K, V> implements Defaultable<K, V> {
     }
 
     @Override
+    public @NonNull V register(@NonNull K key, @NonNull V value) {
+        return registry.register(key, value);
+    }
+
+    @Override
+    public void addRegistrationListener(@NonNull BiConsumer<K, V> listener) {
+        registry.addRegistrationListener(listener);
+    }
+
+    @Nullable
+    @Override
+    public V get(@NonNull K key) {
+        return getOrDefault(key);
+    }
+
+    @Override
+    public @NonNull Set<K> keySet() {
+        return registry.keySet();
+    }
+
+    @Override
+    public @NonNull Iterator<V> iterator() {
+        return registry.iterator();
+    }
+
+    @Override
     public @NonNull K defaultKey() {
         return this.defaultKey;
     }
@@ -68,5 +96,9 @@ public class DefaultableRegistry<K, V> implements Defaultable<K, V> {
     public @NonNull V getOrDefault(final @NonNull K key) {
         final /* @Nullable */ V value = registry.get(key);
         return value != null ? value : this.defaultValue;
+    }
+
+    public final V getDefaultValue() {
+        return defaultValue;
     }
 }

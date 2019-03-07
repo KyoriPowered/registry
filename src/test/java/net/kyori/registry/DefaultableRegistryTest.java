@@ -21,30 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.impl.nonid;
+package net.kyori.registry;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import net.kyori.registry.api.BidirectionalRegistry;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import net.kyori.registry.api.Registry;
+import net.kyori.registry.impl.DefaultableRegistry;
+import net.kyori.registry.impl.RegistryImpl;
+import org.junit.jupiter.api.Test;
 
-/**
- * An extension of the {@link UniRegistry} implementation, but also implementing a {@link BidirectionalRegistry}
- * to create a bidirectional key-to-value map.
- *
- * @param <K> the key type
- * @param <V> the value type
- */
-public class BidiRegistry<K, V> extends UniRegistry<K, V> implements BidirectionalRegistry<K, V> {
-    public BidiRegistry() {
-        super(HashBiMap.create());
-    }
+import static org.junit.jupiter.api.Assertions.*;
 
-    @Nullable
-    @Override
-    public K key(@NonNull V value) {
-        BiMap<K, V> cast = (HashBiMap<K, V>) map;
-        return cast.inverse().get(value);
-    }
+class DefaultableRegistryTest {
+  @Test
+  void testDefaultKeyValue() {
+    final DefaultableRegistry<String, String> container = new DefaultableRegistry<>(Registry.create(), "_default");
+    assertEquals("_default", container.defaultKey());
+
+    assertNull(container.get("aaa"));
+    assertNull(container.get("ccc"));
+
+    container.register("_default", "bbb");
+    assertEquals("bbb", container.get("aaa"));
+    assertNotNull(container.get("ccc"));
+
+    assertEquals("bbb", container.getOrDefault("ccc"));
+  }
 }

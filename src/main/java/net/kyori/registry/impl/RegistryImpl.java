@@ -21,35 +21,66 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.impl.id;
+package net.kyori.registry.impl;
 
-import net.kyori.registry.api.IdentifiableRegistry;
+import com.google.common.collect.Iterators;
 import net.kyori.registry.api.Registry;
-import net.kyori.registry.api.map.IncrementalIdMap;
-import net.kyori.registry.impl.nonid.UniRegistry;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.OptionalInt;
+import java.util.*;
+import java.util.function.BiConsumer;
+
+import static java.util.Objects.requireNonNull;
 
 /**
- * A id registry.
+ * An implementation of a {@link Registry} that forms a
+ * simple key-to-value map.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public class IdentifiableRegistryImpl<K, V> extends IdentifiableRegistry<K, V> {
-    public IdentifiableRegistryImpl(final @NonNull Registry<K, V> registry, final @NonNull IncrementalIdMap<V> ids) {
-        super(registry, ids);
+public class RegistryImpl<K, V> implements Registry<K, V> {
+    protected final Map<K, V> map;
+    private final List<BiConsumer<K, V>> registrationListeners = new ArrayList<>();
+
+    public RegistryImpl() {
+        this(new HashMap<>());
+    }
+
+    public RegistryImpl(Map<K, V> map) {
+        this.map = map;
     }
 
     @Override
-    public @NonNull OptionalInt id(final @NonNull V value) {
-        return this.ids.id(value);
+    public final @NonNull V register(final @NonNull K key, @NonNull V value) {
+        requireNonNull(key, "key");
+        requireNonNull(value, "value");
+
+        map.put(key, value);
+        registrationListeners.forEach(listener -> listener.accept(key, value));
+
+        return value;
     }
 
     @Override
-    public @Nullable V byId(final int id) {
-        return this.ids.get(id);
+    public void addRegistrationListener(@NonNull BiConsumer<K, V> listener) {
+        registrationListeners.add(listener);
+    }
+
+    @Override
+    public @Nullable V get(final @NonNull K key) {
+        requireNonNull(key, "key");
+        return map.get(key);
+    }
+
+    @Override
+    public @NonNull Set<K> keySet() {
+        return Collections.unmodifiableSet(map.keySet());
+    }
+
+    @Override
+    public @NonNull Iterator<V> iterator() {
+        return Iterators.unmodifiableIterator(map.values().iterator());
     }
 }
