@@ -21,36 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.id.map;
+package net.kyori.registry;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.kyori.registry.api.map.IdMap;
+import net.kyori.registry.api.Registry;
+import net.kyori.registry.impl.nonid.BidiRegistry;
+import net.kyori.registry.impl.DefaultableRegistry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class IdMapImplTest {
-  private static final int DEFAULT = -1000;
-  private final IdMap<String> map = IdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
-    {
-      this.defaultReturnValue(DEFAULT);
-    }
-  }, value -> value == -1000);
-
+class DefaultedBidiRegistryImplTest {
   @Test
-  void testId() {
-    assertFalse(this.map.id("foo").isPresent());
-    this.map.put(32, "foo");
-    assertEquals(32, this.map.id("foo").orElse(DEFAULT));
-  }
+  void testDefaultKeyValue() {
+    final DefaultableRegistry<String, String> container = new DefaultableRegistry<>(new BidiRegistry<>(), "_default");
+    assertEquals("aaa", container.defaultKey());
 
-  @Test
-  void testGet() {
-    assertNull(this.map.get(32));
-    this.map.put(32, "foo");
-    assertEquals("foo", this.map.get(32));
+    final Registry<String, String> registry = container.getRegistry();
+    assertNull(registry.get("aaa"));
+    assertNull(registry.get("ccc"));
+
+    registry.register("_default", "bbb");
+    assertEquals("bbb", registry.get("aaa"));
+    assertNull(registry.get("ccc"));
+
+    assertEquals("bbb", container.getOrDefault("ccc"));
   }
 }

@@ -21,36 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.id.map;
+package net.kyori.registry.impl.nonid;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.kyori.registry.api.map.IdMap;
-import org.junit.jupiter.api.Test;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import net.kyori.registry.api.BidirectionalRegistry;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
-class IdMapImplTest {
-  private static final int DEFAULT = -1000;
-  private final IdMap<String> map = IdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
-    {
-      this.defaultReturnValue(DEFAULT);
+/**
+ * An extension of the {@link UniRegistry} implementation, but also implementing a {@link BidirectionalRegistry}
+ * to create a bidirectional key-to-value map.
+ *
+ * @param <K> the key type
+ * @param <V> the value type
+ */
+public class BidiRegistry<K, V> extends UniRegistry<K, V> implements BidirectionalRegistry<K, V> {
+    public BidiRegistry() {
+        super(HashBiMap.create());
     }
-  }, value -> value == -1000);
 
-  @Test
-  void testId() {
-    assertFalse(this.map.id("foo").isPresent());
-    this.map.put(32, "foo");
-    assertEquals(32, this.map.id("foo").orElse(DEFAULT));
-  }
-
-  @Test
-  void testGet() {
-    assertNull(this.map.get(32));
-    this.map.put(32, "foo");
-    assertEquals("foo", this.map.get(32));
-  }
+    @Nullable
+    @Override
+    public K key(@NonNull V value) {
+        BiMap<K, V> cast = (HashBiMap<K, V>) map;
+        return cast.inverse().get(value);
+    }
 }

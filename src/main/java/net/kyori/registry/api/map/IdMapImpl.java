@@ -21,36 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.id.map;
+package net.kyori.registry.api.map;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.kyori.registry.api.map.IdMap;
-import org.junit.jupiter.api.Test;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import java.util.OptionalInt;
+import java.util.function.IntPredicate;
 
-class IdMapImplTest {
-  private static final int DEFAULT = -1000;
-  private final IdMap<String> map = IdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
-    {
-      this.defaultReturnValue(DEFAULT);
+/**
+ * A simple implementation of an id map.
+ *
+ * @param <V> the value type
+ */
+public class IdMapImpl<V> extends AbstractIdMap<V> {
+    private final IntPredicate empty;
+
+    public IdMapImpl(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
+        super(idToV, vToId);
+        this.empty = empty;
     }
-  }, value -> value == -1000);
 
-  @Test
-  void testId() {
-    assertFalse(this.map.id("foo").isPresent());
-    this.map.put(32, "foo");
-    assertEquals(32, this.map.id("foo").orElse(DEFAULT));
-  }
-
-  @Test
-  void testGet() {
-    assertNull(this.map.get(32));
-    this.map.put(32, "foo");
-    assertEquals("foo", this.map.get(32));
-  }
+    @Override
+    public @NonNull OptionalInt id(final @NonNull V value) {
+        final int id = this.vToId.getInt(value);
+        if (!this.empty.test(id)) {
+            return OptionalInt.of(id);
+        }
+        return OptionalInt.empty();
+    }
 }
