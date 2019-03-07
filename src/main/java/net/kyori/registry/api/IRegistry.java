@@ -21,7 +21,7 @@ public interface IRegistry<K, V> extends Iterable<V> {
 
     /**
      * Adds a callback function that will be executed after any call to
-     * {@link IRegistry#register(K, V)}
+     * {@link IRegistry#register(Object, Object)}
      *
      * @param listener the callback function
      */
