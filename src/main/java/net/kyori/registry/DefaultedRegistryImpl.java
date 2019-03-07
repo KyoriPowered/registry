@@ -33,7 +33,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @param <V> the value type
  */
 public class DefaultedRegistryImpl<K, V> extends RegistryImpl<K, V> implements DefaultedRegistry<K, V> {
-  private final K defaultKey;
+  protected final K defaultKey;
   private @MonotonicNonNull V defaultValue;
 
   public DefaultedRegistryImpl(final @NonNull K defaultKey) {

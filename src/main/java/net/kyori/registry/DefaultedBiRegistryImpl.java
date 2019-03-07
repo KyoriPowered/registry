@@ -33,7 +33,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @param <V> the value type
  */
 public class DefaultedBiRegistryImpl<K, V> extends BiRegistryImpl<K, V> implements DefaultedBiRegistry<K, V> {
-  private final K defaultKey;
+  protected final K defaultKey;
   private @MonotonicNonNull V defaultValue;
 
   public DefaultedBiRegistryImpl(final @NonNull K defaultKey) {
