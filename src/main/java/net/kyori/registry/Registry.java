@@ -21,84 +21,66 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.impl;
+package net.kyori.registry;
 
-import net.kyori.registry.api.Registry;
-import net.kyori.registry.api.defaultable.Defaultable;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import com.google.common.collect.Iterators;
+import net.kyori.registry.api.IRegistry;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 
+import static java.util.Objects.requireNonNull;
+
 /**
- * A {@link DefaultableRegistry} is an extension of a {@link RegistryImpl}. This type of registry provides
- * a default values, as registered, for missing keys.
+ * An implementation of a {@link IRegistry} that forms a
+ * simple key-to-value map.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public class DefaultableRegistry<K, V> implements Registry<K, V>, Defaultable<K, V> {
-    private final Registry<K, V> registry;
-    private final K defaultKey;
-    @MonotonicNonNull
-    private V defaultValue;
+public class Registry<K, V> implements IRegistry<K, V> {
+    protected final Map<K, V> map;
+    private final List<BiConsumer<K, V>> registrationListeners = new ArrayList<>();
 
-    public DefaultableRegistry(Registry<K, V> registry, final @NonNull K defaultKey) {
-        registry.addRegistrationListener((key, value) -> {
-            if (defaultKey.equals(key)) {
-                this.defaultValue = value;
-            }
-        });
-
-        this.registry = registry;
-        this.defaultKey = defaultKey;
+    public Registry() {
+        this(new HashMap<>());
     }
 
-    public Registry<K, V> getRegistry() {
-        return registry;
+    public Registry(Map<K, V> map) {
+        this.map = map;
     }
 
     @Override
-    public @NonNull V register(@NonNull K key, @NonNull V value) {
-        return registry.register(key, value);
+    public final @NonNull V register(final @NonNull K key, @NonNull V value) {
+        requireNonNull(key, "key");
+        requireNonNull(value, "value");
+
+        map.put(key, value);
+        registrationListeners.forEach(listener -> listener.accept(key, value));
+
+        return value;
     }
 
     @Override
     public void addRegistrationListener(@NonNull BiConsumer<K, V> listener) {
-        registry.addRegistrationListener(listener);
+        registrationListeners.add(listener);
     }
 
-    @Nullable
     @Override
-    public V get(@NonNull K key) {
-        return getOrDefault(key);
+    public @Nullable V get(final @NonNull K key) {
+        requireNonNull(key, "key");
+        return map.get(key);
     }
 
     @Override
     public @NonNull Set<K> keySet() {
-        return registry.keySet();
+        return Collections.unmodifiableSet(map.keySet());
     }
 
     @Override
     public @NonNull Iterator<V> iterator() {
-        return registry.iterator();
-    }
-
-    @Override
-    public @NonNull K defaultKey() {
-        return this.defaultKey;
-    }
-
-    @Override
-    public @NonNull V getOrDefault(final @NonNull K key) {
-        final /* @Nullable */ V value = registry.get(key);
-        return value != null ? value : this.defaultValue;
-    }
-
-    public final V getDefaultValue() {
-        return defaultValue;
+        return Iterators.unmodifiableIterator(map.values().iterator());
     }
 }

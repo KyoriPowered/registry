@@ -23,26 +23,23 @@
  */
 package net.kyori.registry;
 
-import net.kyori.registry.api.BidirectionalRegistry;
-import net.kyori.registry.impl.BidirectionalRegistryImpl;
-import net.kyori.registry.impl.DefaultableRegistry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DefaultableBidirectionalRegistryTest {
-  @Test
-  void testDefaultKeyValue() {
-    final DefaultableRegistry<String, String> container = new DefaultableRegistry<>(BidirectionalRegistry.create(), "_default");
-    assertEquals("_default", container.defaultKey());
+class DefaultValueBiRegistryTest {
+    @Test
+    void testDefaultKeyValue() {
+        final DefaultValueRegistry<String, String> container = new DefaultValueRegistry<>(new BiRegistry<>(), "_default");
+        assertEquals("_default", container.defaultKey());
 
-    assertNull(container.get("aaa"));
-    assertNull(container.get("ccc"));
+        assertNull(container.get("aaa"));
+        assertNull(container.get("ccc"));
 
-    container.register("_default", "bbb");
-    assertEquals("bbb", container.get("aaa"));
+        container.register("_default", "bbb");
+        assertEquals("bbb", container.get("aaa"));
 
-    assertNotNull(container.get("ccc"));
-    assertEquals("bbb", container.getOrDefault("ccc"));
-  }
+        assertNotNull(container.get("ccc"));
+        assertEquals("bbb", container.getOrDefault("ccc"));
+    }
 }

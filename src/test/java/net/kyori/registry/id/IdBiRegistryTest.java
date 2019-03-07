@@ -25,41 +25,41 @@ package net.kyori.registry.id;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.kyori.registry.api.BidirectionalRegistry;
+import net.kyori.registry.BiRegistry;
+import net.kyori.registry.IdRegistry;
+import net.kyori.registry.api.IBiRegistry;
 import net.kyori.registry.api.map.IncrementalIdMap;
-import net.kyori.registry.impl.BidirectionalRegistryImpl;
-import net.kyori.registry.impl.IdentifiableRegistryImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class IdentifiableBidirectionalRegistryTest {
-  private static final int DEFAULT = -1000;
+class IdBiRegistryTest {
+    private static final int DEFAULT = -1000;
 
-  private final IdentifiableRegistryImpl<String, String> container = new IdentifiableRegistryImpl<>(new BidirectionalRegistryImpl<>(), IncrementalIdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
-    {
-      this.defaultReturnValue(DEFAULT);
+    private final IdRegistry<String, String> container = new IdRegistry<>(new BiRegistry<>(), IncrementalIdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
+        {
+            this.defaultReturnValue(DEFAULT);
+        }
+    }, value -> value == DEFAULT));
+
+    @Test
+    void testRegister() {
+        IBiRegistry registry = (IBiRegistry) container.getRegistry();
+
+        assertNull(registry.get("foo"));
+        assertEquals(DEFAULT, container.id("bar").orElse(DEFAULT));
+        container.register(32, "foo", "bar");
+        assertEquals("bar", registry.get("foo"));
+        assertEquals("foo", registry.key("bar"));
+        assertEquals(32, container.id("bar").orElse(DEFAULT));
+
+        // check incremental
+        assertNull(registry.get("abc"));
+        container.register("abc", "def");
+        assertEquals("def", registry.get("abc"));
+        assertEquals("abc", registry.key("def"));
+        assertEquals(33, container.id("def").orElse(DEFAULT));
+        assertEquals("def", container.byId(33));
     }
-  }, value -> value == DEFAULT));
-
-  @Test
-  void testRegister() {
-    BidirectionalRegistry<String, String> registry = (BidirectionalRegistry<String, String>) container.getRegistry();
-
-    assertNull(registry.get("foo"));
-    assertEquals(DEFAULT, container.id("bar").orElse(DEFAULT));
-    container.register(32, "foo", "bar");
-    assertEquals("bar", registry.get("foo"));
-    assertEquals("foo", registry.key("bar"));
-    assertEquals(32, container.id("bar").orElse(DEFAULT));
-
-    // check incremental
-    assertNull(registry.get("abc"));
-    container.register("abc", "def");
-    assertEquals("def", registry.get("abc"));
-    assertEquals("abc", registry.key("def"));
-    assertEquals(33, container.id("def").orElse(DEFAULT));
-    assertEquals("def", container.byId(33));
-  }
 }

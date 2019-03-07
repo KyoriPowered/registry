@@ -31,21 +31,21 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class IncrementalIdMapImplTest {
-  private static final int DEFAULT = -1000;
-  private final IncrementalIdMap<String> map = IncrementalIdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
-    {
-      this.defaultReturnValue(DEFAULT);
-    }
-  }, value -> value == -1000);
+    private static final int DEFAULT = -1000;
+    private final IncrementalIdMap<String> map = IncrementalIdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
+        {
+            this.defaultReturnValue(DEFAULT);
+        }
+    }, value -> value == -1000);
 
-  @Test
-  void testPut() {
-    final int i0 = this.map.put("abc");
-    assertEquals(0, i0);
-    assertEquals("abc", this.map.get(i0));
-    final int i1 = this.map.put("def");
-    assertEquals(1, i1);
-    assertEquals("def", this.map.get(i1));
-    assertEquals("abc", this.map.get(i0));
-  }
+    @Test
+    void testPut() {
+        final int i0 = this.map.put("abc");
+        assertEquals(0, i0);
+        assertEquals("abc", this.map.get(i0));
+        final int i1 = this.map.put("def");
+        assertEquals(1, i1);
+        assertEquals("def", this.map.get(i1));
+        assertEquals("abc", this.map.get(i0));
+    }
 }

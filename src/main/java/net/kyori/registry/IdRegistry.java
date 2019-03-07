@@ -1,22 +1,22 @@
-package net.kyori.registry.impl;
+package net.kyori.registry;
 
-import net.kyori.registry.api.Registry;
+import net.kyori.registry.api.IRegistry;
 import net.kyori.registry.api.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.OptionalInt;
 
-public class IdentifiableRegistryImpl<K, V> {
-    private final Registry<K, V> registry;
+public class IdRegistry<K, V> {
+    private final IRegistry<K, V> registry;
     protected final IncrementalIdMap<V> ids;
 
-    public IdentifiableRegistryImpl(final @NonNull Registry<K, V> registry, final @NonNull IncrementalIdMap<V> ids) {
+    public IdRegistry(final @NonNull IRegistry<K, V> registry, final @NonNull IncrementalIdMap<V> ids) {
         this.registry = registry;
         this.ids = ids;
     }
 
-    public final Registry<K, V> getRegistry() {
+    public final IRegistry<K, V> getRegistry() {
         return registry;
     }
 

@@ -1,25 +1,15 @@
 package net.kyori.registry.api;
 
-import net.kyori.registry.impl.RegistryImpl;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public interface Registry<K, V> extends Iterable<V> {
-    static <K, V> Registry<K, V> create() {
-        return new RegistryImpl<>();
-    }
-
-    static <K, V> Registry<K, V> createFromMap(Map<K, V> map) {
-        return new RegistryImpl<>(map);
-    }
-
+public interface IRegistry<K, V> extends Iterable<V> {
     /**
      * Associates {@code key} to {@code value}.
      *
@@ -31,7 +21,7 @@ public interface Registry<K, V> extends Iterable<V> {
 
     /**
      * Adds a callback function that will be executed after any call to
-     * {@link Registry#register(K, V)}
+     * {@link IRegistry#register(K, V)}
      *
      * @param listener the callback function
      */

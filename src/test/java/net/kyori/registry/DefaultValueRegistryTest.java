@@ -21,21 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.api.defaultable;
+package net.kyori.registry;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.junit.jupiter.api.Test;
 
-/**
- * A read-only component of an id registry with a default key and value.
- *
- * @param <V> the value type
- */
-public interface DefaultableIdentifier<V> {
-    /**
-     * Gets the id for {@code value}.
-     *
-     * @param value the value
-     * @return the id
-     */
-    int idOrDefault(final @NonNull V value);
+import static org.junit.jupiter.api.Assertions.*;
+
+class DefaultValueRegistryTest {
+    @Test
+    void testDefaultKeyValue() {
+        final DefaultValueRegistry<String, String> container = new DefaultValueRegistry<>(new Registry<>(), "_default");
+        assertEquals("_default", container.defaultKey());
+
+        assertNull(container.get("aaa"));
+        assertNull(container.get("ccc"));
+
+        container.register("_default", "bbb");
+        assertEquals("bbb", container.get("aaa"));
+        assertNotNull(container.get("ccc"));
+
+        assertEquals("bbb", container.getOrDefault("ccc"));
+    }
 }

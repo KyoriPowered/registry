@@ -1,8 +1,8 @@
-package net.kyori.registry.impl;
+package net.kyori.registry;
 
-import net.kyori.registry.api.Registry;
-import net.kyori.registry.api.defaultable.Defaultable;
-import net.kyori.registry.api.defaultable.DefaultableIdentifier;
+import net.kyori.registry.api.IRegistry;
+import net.kyori.registry.api.WithDefaultIdentifier;
+import net.kyori.registry.api.WithDefaultValue;
 import net.kyori.registry.api.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -10,13 +10,13 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.OptionalInt;
 
-public class DefaultableIdentifiableRegistryImpl<K, V> extends IdentifiableRegistryImpl<K, V> implements Defaultable<K, V>, DefaultableIdentifier<V> {
+public class DefaultValueIdRegistry<K, V> extends IdRegistry<K, V> implements WithDefaultValue<K, V>, WithDefaultIdentifier<V> {
     private final K defaultKey;
     @MonotonicNonNull
     private V defaultValue;
     private int defaultId;
 
-    public DefaultableIdentifiableRegistryImpl(Registry<K, V> registry, final @NonNull K defaultKey, final @NonNull IncrementalIdMap<V> ids) {
+    public DefaultValueIdRegistry(IRegistry<K, V> registry, final @NonNull K defaultKey, final @NonNull IncrementalIdMap<V> ids) {
         super(registry, ids);
 
         this.defaultKey = defaultKey;

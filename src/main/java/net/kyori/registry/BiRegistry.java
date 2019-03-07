@@ -21,27 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.impl;
+package net.kyori.registry;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import net.kyori.registry.api.BidirectionalRegistry;
+import net.kyori.registry.api.IBiRegistry;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * An extension of the {@link RegistryImpl} implementation, but also implementing a {@link BidirectionalRegistry}
+ * An extension of the {@link Registry} implementation, but also implementing a {@link IBiRegistry}
  * to create a bidirectional key-to-value map.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public class BidirectionalRegistryImpl<K, V> extends RegistryImpl<K, V> implements BidirectionalRegistry<K, V> {
-    public BidirectionalRegistryImpl() {
+public class BiRegistry<K, V> extends Registry<K, V> implements IBiRegistry<K, V> {
+    public BiRegistry() {
         this(HashBiMap.create());
     }
 
-    public BidirectionalRegistryImpl(BiMap<K, V> map) {
+    public BiRegistry(BiMap<K, V> map) {
         super(map);
     }
 
