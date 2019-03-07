@@ -1,3 +1,3 @@
-# registryImpl
+# registry
 
-[![Build Status](https://travis-ci.com/KyoriPowered/registryImpl.svg?branch=master)](https://travis-ci.com/KyoriPowered/registryImpl)
+[![Build Status](https://travis-ci.com/KyoriPowered/registry.svg?branch=master)](https://travis-ci.com/KyoriPowered/registry)
