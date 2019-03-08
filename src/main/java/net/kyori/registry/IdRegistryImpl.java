@@ -43,7 +43,7 @@ public class IdRegistryImpl<K, V> implements Registry<K, V> {
     }
 
     public @NonNull V register(final @NonNull K key, @NonNull V value) {
-        return register(ids.next(), key, value);
+        return this.register(ids.next(), key, value);
     }
 
     public @NonNull V register(final int id, final @NonNull K key, @NonNull V value) {

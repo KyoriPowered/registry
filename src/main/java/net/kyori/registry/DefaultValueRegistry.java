@@ -24,7 +24,7 @@
 package net.kyori.registry;
 
 import net.kyori.registry.api.Registry;
-import net.kyori.registry.api.WithDefaultValue;
+import net.kyori.registry.api.DefaultedRegistry;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -40,7 +40,7 @@ import java.util.function.BiConsumer;
  * @param <K> the key type
  * @param <V> the value type
  */
-public class DefaultValueRegistry<K, V> implements Registry<K, V>, WithDefaultValue<K, V> {
+public class DefaultValueRegistry<K, V> implements Registry<K, V>, DefaultedRegistry<K, V> {
     private final Registry<K, V> registry;
     private final K defaultKey;
     @MonotonicNonNull
@@ -95,11 +95,7 @@ public class DefaultValueRegistry<K, V> implements Registry<K, V>, WithDefaultVa
 
     @Override
     public @NonNull V getOrDefault(final @NonNull K key) {
-        final /* @Nullable */ V value = registry.get(key);
+        final V value = registry.get(key);
         return value != null ? value : this.defaultValue;
-    }
-
-    public final V getDefaultValue() {
-        return defaultValue;
     }
 }

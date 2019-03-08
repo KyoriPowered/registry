@@ -25,8 +25,17 @@ package net.kyori.registry.api;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public interface WithDefaultValue<K, V> {
-    @NonNull K defaultKey();
-
-    @NonNull V getOrDefault(@NonNull K key);
+/**
+ * A read-only component of an id registry with a default key and value.
+ *
+ * @param <V> the value type
+ */
+public interface DefaultedRegistryIdentifier<V> {
+    /**
+     * Gets the id for {@code value}.
+     *
+     * @param value the value
+     * @return the id
+     */
+    int idOrDefault(final @NonNull V value);
 }
