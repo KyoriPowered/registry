@@ -27,7 +27,7 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * A simple implementation of a registry with a default key and value.
+ * A simple implementation of a bidirectional registry with a default key and value.
  *
  * @param <K> the key type
  * @param <V> the value type
@@ -52,9 +52,13 @@ public class DefaultedRegistryImpl<K, V> extends RegistryImpl<K, V> implements D
   }
 
   @Override
-  protected void registered(final @NonNull K key, final @NonNull V value) {
+  protected void registered(@NonNull final K key, @NonNull final V value) {
     if(this.defaultKey.equals(key)) {
-      this.defaultValue = value;
+      this.defaultRegistered(key, value);
     }
+  }
+
+  protected void defaultRegistered(final @NonNull K key, final @NonNull V value) {
+    this.defaultValue = value;
   }
 }

@@ -23,7 +23,15 @@
  */
 package net.kyori.registry;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Iterators;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
@@ -34,6 +42,18 @@ import static java.util.Objects.requireNonNull;
  * @param <V> the value type
  */
 public abstract class AbstractRegistry<K, V> implements Registry<K, V> {
+  protected final BiMap<K, V> map = HashBiMap.create();
+
+  @Override
+  public @Nullable V get(final @NonNull K key) {
+    return this.map.get(key);
+  }
+
+  @Override
+  public @Nullable K key(final @NonNull V value) {
+    return this.map.inverse().get(value);
+  }
+
   @Override
   public final @NonNull V register(final @NonNull K key, @NonNull V value) {
     requireNonNull(key, "key");
@@ -46,5 +66,15 @@ public abstract class AbstractRegistry<K, V> implements Registry<K, V> {
   protected abstract @NonNull V register0(final @NonNull K key, final @NonNull V value);
 
   protected void registered(final @NonNull K key, final @NonNull V value) {
+  }
+
+  @Override
+  public @NonNull Set<K> keySet() {
+    return Collections.unmodifiableSet(this.map.keySet());
+  }
+
+  @Override
+  public @NonNull Iterator<V> iterator() {
+    return Iterators.unmodifiableIterator(this.map.values().iterator());
   }
 }

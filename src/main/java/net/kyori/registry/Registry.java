@@ -26,7 +26,7 @@ package net.kyori.registry;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * A registry.
+ * A bidirectional registry.
  *
  * @param <K> the key type
  * @param <V> the value type

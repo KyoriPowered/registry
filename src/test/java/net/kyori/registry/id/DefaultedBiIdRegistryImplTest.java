@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class DefaultedBiIdRegistryImplTest {
   private static final int DEFAULT = -1000;
-  private final DefaultedBiIdRegistry<String, String> registry = DefaultedBiIdRegistry.create(IncrementalIdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
+  private final DefaultedIdRegistry<String, String> registry = DefaultedIdRegistry.create(IncrementalIdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
     {
       this.defaultReturnValue(DEFAULT);
     }

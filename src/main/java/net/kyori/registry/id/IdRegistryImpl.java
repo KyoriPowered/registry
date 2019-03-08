@@ -21,23 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id;
 
-import org.junit.jupiter.api.Test;
+import net.kyori.registry.AbstractRegistry;
+import net.kyori.registry.id.map.IncrementalIdMap;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import java.util.OptionalInt;
 
-class DefaultedBiRegistryTest {
-  @Test
-  void testDefaultKeyValue() {
-    final DefaultedBiRegistry<String, String> registry = DefaultedBiRegistry.create("aaa");
-    assertEquals("aaa", registry.defaultKey());
-    assertNull(registry.get("aaa"));
-    assertNull(registry.get("ccc"));
-    registry.register("aaa", "bbb");
-    assertEquals("bbb", registry.get("aaa"));
-    assertNull(registry.get("ccc"));
-    assertEquals("bbb", registry.getOrDefault("ccc"));
+public class IdRegistryImpl<K, V> extends AbstractRegistry<K, V> implements IdRegistry<K, V> {
+  private final IncrementalIdMap<V> ids;
+
+  public IdRegistryImpl(final @NonNull IncrementalIdMap<V> ids) {
+    this.ids = ids;
+  }
+
+  @Override
+  protected @NonNull V register0(final @NonNull K key, final @NonNull V value) {
+    return this.register(this.ids.next(), key, value);
+  }
+
+  @Override
+  public @NonNull V register(final int id, final @NonNull K key, final @NonNull V value) {
+    this.map.put(key, value);
+    this.ids.put(id, value);
+    return value;
+  }
+
+  @Override
+  public @NonNull OptionalInt id(final @NonNull V value) {
+    return this.ids.id(value);
+  }
+
+  @Override
+  public @Nullable V byId(final int id) {
+    return this.ids.get(id);
   }
 }

@@ -36,39 +36,44 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RegistryTest {
+  private final Registry<String, String> registry = Registry.create();
+
   @Test
   void testGetPut() {
-    final Registry<String, String> registry = Registry.create();
-    assertNull(registry.get("aaa"));
-    registry.register("aaa", "bbb");
-    assertEquals("bbb", registry.get("aaa"));
+    assertNull(this.registry.get("aaa"));
+    this.registry.register("aaa", "bbb");
+    assertEquals("bbb", this.registry.get("aaa"));
+  }
+
+  @Test
+  void testGetKey() {
+    assertNull(this.registry.key("bbb"));
+    this.registry.register("aaa", "bbb");
+    assertEquals("aaa", this.registry.key("bbb"));
   }
 
   @Test
   void testKeySet() {
-    final Registry<String, String> registry = Registry.create();
-    assertThat(registry.keySet()).isEmpty();
-    registry.register("eee", "fff");
-    registry.register("aaa", "bbb");
-    registry.register("ccc", "ddd");
-    assertThat(registry.keySet()).containsExactly("aaa", "ccc", "eee");
+    assertThat(this.registry.keySet()).isEmpty();
+    this.registry.register("eee", "fff");
+    this.registry.register("aaa", "bbb");
+    this.registry.register("ccc", "ddd");
+    assertThat(this.registry.keySet()).containsExactly("aaa", "ccc", "eee");
   }
 
   @Test
   void testIterator() {
-    final Registry<String, String> registry = Registry.create();
-    assertThat(ImmutableList.copyOf(registry.iterator())).isEmpty();
-    registry.register("eee", "fff");
-    registry.register("aaa", "bbb");
-    registry.register("ccc", "ddd");
-    assertThat(ImmutableList.copyOf(registry.iterator())).containsExactly("bbb", "ddd", "fff");
+    assertThat(ImmutableList.copyOf(this.registry.iterator())).isEmpty();
+    this.registry.register("eee", "fff");
+    this.registry.register("aaa", "bbb");
+    this.registry.register("ccc", "ddd");
+    assertThat(ImmutableList.copyOf(this.registry.iterator())).containsExactly("bbb", "ddd", "fff");
   }
 
   @Test
   void testIteratorRemove() {
-    final Registry<String, String> registry = Registry.create();
-    registry.register("aaa", "bbb");
-    final Iterator<String> it = registry.iterator();
+    this.registry.register("aaa", "bbb");
+    final Iterator<String> it = this.registry.iterator();
     assertTrue(it.hasNext());
     assertEquals("bbb", it.next());
     assertThrows(UnsupportedOperationException.class, it::remove);
@@ -76,11 +81,10 @@ class RegistryTest {
 
   @Test
   void testStream() {
-    final Registry<String, String> registry = Registry.create();
-    assertThat(registry.stream()).isEmpty();
-    registry.register("eee", "fff");
-    registry.register("aaa", "bbb");
-    registry.register("ccc", "ddd");
-    assertThat(registry.stream()).containsExactly("bbb", "ddd", "fff");
+    assertThat(this.registry.stream()).isEmpty();
+    this.registry.register("eee", "fff");
+    this.registry.register("aaa", "bbb");
+    this.registry.register("ccc", "ddd");
+    assertThat(this.registry.stream()).containsExactly("bbb", "ddd", "fff");
   }
 }

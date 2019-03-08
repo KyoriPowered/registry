@@ -23,43 +23,18 @@
  */
 package net.kyori.registry;
 
-import com.google.common.collect.Iterators;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 /**
- * A simple implementation of a registry.
+ * A simple implementation of a bidirectional registry.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
 public class RegistryImpl<K, V> extends AbstractRegistry<K, V> implements Registry<K, V> {
-  private final Map<K, V> map = new HashMap<>();
-
-  @Override
-  public @Nullable V get(final @NonNull K key) {
-    return this.map.get(key);
-  }
-
   @Override
   protected @NonNull V register0(final @NonNull K key, final @NonNull V value) {
     this.map.put(key, value);
     return value;
-  }
-
-  @Override
-  public @NonNull Set<K> keySet() {
-    return Collections.unmodifiableSet(this.map.keySet());
-  }
-
-  @Override
-  public @NonNull Iterator<V> iterator() {
-    return Iterators.unmodifiableIterator(this.map.values().iterator());
   }
 }

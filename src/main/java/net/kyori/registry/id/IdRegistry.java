@@ -23,15 +23,29 @@
  */
 package net.kyori.registry.id;
 
+import net.kyori.registry.Registry;
+import net.kyori.registry.id.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * A registry with an {@code int} id to {@code V} mapping.
+ * A bidirectional registry with an {@code int} id to {@code V} mapping.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public interface IdRegistry<K, V> extends IdRegistryGetter<K, V> {
+public interface IdRegistry<K, V> extends IdRegistryGetter<K, V>, Registry<K, V> {
+  /**
+   * Creates a bidirectional id registry.
+   *
+   * @param ids the id map
+   * @param <K> the key type
+   * @param <V> the value type
+   * @return a new bidirectional id registry
+   */
+  static <K, V> @NonNull IdRegistry<K, V> create(final @NonNull IncrementalIdMap<V> ids) {
+    return new IdRegistryImpl<>(ids);
+  }
+
   /**
    * Associates {@code id} and {@code key} to {@code value}.
    *

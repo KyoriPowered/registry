@@ -23,18 +23,19 @@
  */
 package net.kyori.registry.id;
 
-import net.kyori.registry.BiRegistryImpl;
-import net.kyori.registry.id.BiIdRegistry;
+import net.kyori.registry.DefaultedRegistryImpl;
 import net.kyori.registry.id.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.OptionalInt;
 
-public class BiIdRegistryImpl<K, V> extends BiRegistryImpl<K, V> implements BiIdRegistry<K, V> {
+public class DefaultedIdRegistryImpl<K, V> extends DefaultedRegistryImpl<K, V> implements DefaultedIdRegistry<K, V> {
   private final IncrementalIdMap<V> ids;
+  private int defaultId;
 
-  public BiIdRegistryImpl(final @NonNull IncrementalIdMap<V> ids) {
+  public DefaultedIdRegistryImpl(final @NonNull IncrementalIdMap<V> ids, final @NonNull K defaultKey) {
+    super(defaultKey);
     this.ids = ids;
   }
 
@@ -44,10 +45,17 @@ public class BiIdRegistryImpl<K, V> extends BiRegistryImpl<K, V> implements BiId
   }
 
   @Override
-  public @NonNull V register(final int id, final @NonNull K key, final @NonNull V value) {
-    super.register0(key, value);
+  public @NonNull V register(final int id, final @NonNull K key, @NonNull V value) {
     this.ids.put(id, value);
+    value = super.register0(key, value);
+    this.registered(key, value);
     return value;
+  }
+
+  @Override
+  protected void defaultRegistered(@NonNull final K key, @NonNull final V value) {
+    super.defaultRegistered(key, value);
+    this.defaultId = this.id(value).orElseThrow(() -> new IllegalStateException("This shouldn't happen!"));
   }
 
   @Override
@@ -56,7 +64,14 @@ public class BiIdRegistryImpl<K, V> extends BiRegistryImpl<K, V> implements BiId
   }
 
   @Override
+  public int idOrDefault(final @NonNull V value) {
+    final OptionalInt id = this.id(value);
+    return id.isPresent() ? id.getAsInt() : this.defaultId;
+  }
+
+  @Override
   public @Nullable V byId(final int id) {
-    return this.ids.get(id);
+    final V value = this.ids.get(id);
+    return value != null ? value : this.defaultValue;
   }
 }

@@ -29,15 +29,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class DefaultedRegistryTest {
+  private final DefaultedRegistry<String, String> registry = DefaultedRegistry.create("aaa");
+
   @Test
   void testDefaultKeyValue() {
-    final DefaultedRegistry<String, String> registry = DefaultedRegistry.create("aaa");
-    assertEquals("aaa", registry.defaultKey());
-    assertNull(registry.get("aaa"));
-    assertNull(registry.get("ccc"));
-    registry.register("aaa", "bbb");
-    assertEquals("bbb", registry.get("aaa"));
-    assertNull(registry.get("ccc"));
-    assertEquals("bbb", registry.getOrDefault("ccc"));
+    assertEquals("aaa", this.registry.defaultKey());
+  }
+
+  @Test
+  void testDefaultValue() {
+    assertNull(this.registry.get("aaa"));
+    this.registry.register("aaa", "bbb");
+    assertEquals("bbb", this.registry.get("aaa"));
+    assertNull(this.registry.get("ccc"));
+    assertEquals("bbb", this.registry.getOrDefault("ccc"));
   }
 }
