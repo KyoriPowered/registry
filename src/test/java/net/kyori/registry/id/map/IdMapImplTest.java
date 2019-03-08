@@ -28,7 +28,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class IdMapImplTest {
@@ -37,13 +36,13 @@ class IdMapImplTest {
     {
       this.defaultReturnValue(DEFAULT);
     }
-  }, value -> value == -1000);
+  });
 
   @Test
   void testId() {
-    assertFalse(this.map.id("foo").isPresent());
+    assertEquals(DEFAULT, this.map.id("foo"));
     this.map.put(32, "foo");
-    assertEquals(32, this.map.id("foo").orElse(DEFAULT));
+    assertEquals(32, this.map.id("foo"));
   }
 
   @Test

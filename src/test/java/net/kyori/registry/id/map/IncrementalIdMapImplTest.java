@@ -35,7 +35,7 @@ class IncrementalIdMapImplTest {
     {
       this.defaultReturnValue(DEFAULT);
     }
-  }, value -> value == -1000);
+  });
 
   @Test
   void testPut() {

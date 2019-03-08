@@ -40,16 +40,16 @@ class DefaultedBiIdRegistryImplTest {
     {
       this.defaultReturnValue(DEFAULT);
     }
-  }, value -> value == DEFAULT), "foo");
+  }), "foo");
 
   @Test
   void testRegister() {
     assertNull(this.registry.get("foo"));
-    assertEquals(DEFAULT, this.registry.id("bar").orElse(DEFAULT));
+    assertEquals(DEFAULT, this.registry.id("bar"));
     this.registry.register(32, "foo", "bar");
     assertEquals("bar", this.registry.get("foo"));
     assertEquals("foo", this.registry.key("bar"));
-    assertEquals(32, this.registry.id("bar").orElse(DEFAULT));
+    assertEquals(32, this.registry.id("bar"));
 
     // default is now in, let's check
 
@@ -62,7 +62,7 @@ class DefaultedBiIdRegistryImplTest {
     this.registry.register("abc", "def");
     assertEquals("def", this.registry.get("abc"));
     assertEquals("abc", this.registry.key("def"));
-    assertEquals(33, this.registry.id("def").orElse(DEFAULT));
+    assertEquals(33, this.registry.id("def"));
     assertEquals("def", this.registry.byId(33));
   }
 }

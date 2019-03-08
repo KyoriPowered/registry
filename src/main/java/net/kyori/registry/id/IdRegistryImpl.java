@@ -50,7 +50,7 @@ public class IdRegistryImpl<K, V> extends AbstractRegistry<K, V> implements IdRe
   }
 
   @Override
-  public @NonNull OptionalInt id(final @NonNull V value) {
+  public int id(final @NonNull V value) {
     return this.ids.id(value);
   }
 

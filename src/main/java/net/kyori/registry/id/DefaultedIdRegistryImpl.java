@@ -46,8 +46,8 @@ public class DefaultedIdRegistryImpl<K, V> extends DefaultedRegistryImpl<K, V> i
 
   @Override
   public @NonNull V register(final int id, final @NonNull K key, @NonNull V value) {
-    this.ids.put(id, value);
     value = super.register0(key, value);
+    this.ids.put(id, value);
     this.registered(key, value);
     return value;
   }
@@ -55,18 +55,17 @@ public class DefaultedIdRegistryImpl<K, V> extends DefaultedRegistryImpl<K, V> i
   @Override
   protected void defaultRegistered(@NonNull final K key, @NonNull final V value) {
     super.defaultRegistered(key, value);
-    this.defaultId = this.id(value).orElseThrow(() -> new IllegalStateException("This shouldn't happen!"));
+    this.defaultId = this.id(value);
   }
 
   @Override
-  public @NonNull OptionalInt id(final @NonNull V value) {
+  public int id(final @NonNull V value) {
     return this.ids.id(value);
   }
 
   @Override
   public int idOrDefault(final @NonNull V value) {
-    final OptionalInt id = this.id(value);
-    return id.isPresent() ? id.getAsInt() : this.defaultId;
+    return this.ids.idOrDefault(value, this.defaultId);
   }
 
   @Override

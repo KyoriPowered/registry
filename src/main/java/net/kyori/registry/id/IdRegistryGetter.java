@@ -37,18 +37,18 @@ import java.util.OptionalInt;
  */
 public interface IdRegistryGetter<K, V> extends RegistryGetter<K, V> {
   /**
-   * Gets the id for {@code value}.
-   *
-   * @param value the value
-   * @return the id
-   */
-  @NonNull OptionalInt id(final @NonNull V value);
-
-  /**
    * Gets the value for {@code id}.
    *
    * @param id the id
    * @return the value
    */
   @Nullable V byId(final int id);
+
+  /**
+   * Gets the id for {@code value}.
+   *
+   * @param value the value
+   * @return the id
+   */
+  int id(final @NonNull V value);
 }

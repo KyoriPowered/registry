@@ -27,8 +27,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.function.IntPredicate;
-
 /**
  * An id map.
  *
@@ -40,12 +38,11 @@ public interface IdMap<V> extends IdMapGetter<V> {
    *
    * @param idToV the id to value map
    * @param vToId the value to id map
-   * @param empty emptiness checker
    * @param <V> the value type
    * @return an id map
    */
-  static <V> @NonNull IdMap<V> create(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
-    return new IdMapImpl<>(idToV, vToId, empty);
+  static <V> @NonNull IdMap<V> create(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId) {
+    return new IdMapImpl<>(idToV, vToId);
   }
 
   /**

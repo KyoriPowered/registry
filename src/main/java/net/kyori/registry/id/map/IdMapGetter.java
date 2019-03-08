@@ -26,8 +26,6 @@ package net.kyori.registry.id.map;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.OptionalInt;
-
 /**
  * A readable id map.
  *
@@ -35,18 +33,27 @@ import java.util.OptionalInt;
  */
 public interface IdMapGetter<V> {
   /**
-   * Gets the id for {@code value}.
-   *
-   * @param value the value
-   * @return the id
-   */
-  @NonNull OptionalInt id(final @NonNull V value);
-
-  /**
    * Gets a value by its id.
    *
    * @param id the id
    * @return the value
    */
   @Nullable V get(final int id);
+
+  /**
+   * Gets the id for {@code value}.
+   *
+   * @param value the value
+   * @return the id
+   */
+  int id(final @NonNull V value);
+
+  /**
+   * Gets the id for {@code value}.
+   *
+   * @param value the value
+   * @param defaultId the default id
+   * @return the id
+   */
+  int idOrDefault(final @NonNull V value, final int defaultId);
 }

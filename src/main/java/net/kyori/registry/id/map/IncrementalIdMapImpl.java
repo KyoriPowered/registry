@@ -27,8 +27,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.function.IntPredicate;
-
 /**
  * A simple implementation of an incremental id map.
  *
@@ -37,8 +35,8 @@ import java.util.function.IntPredicate;
 public class IncrementalIdMapImpl<V> extends IdMapImpl<V> implements IncrementalIdMap<V> {
   private int nextId;
 
-  public IncrementalIdMapImpl(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
-    super(idToV, vToId, empty);
+  public IncrementalIdMapImpl(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId) {
+    super(idToV, vToId);
   }
 
   @Override
