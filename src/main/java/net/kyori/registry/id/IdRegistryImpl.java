@@ -21,40 +21,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.map;
+package net.kyori.registry.id;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.kyori.registry.ForwardingRegistry;
+import net.kyori.registry.Registry;
+import net.kyori.registry.id.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-/**
- * An abstract implementation of an id map.
- *
- * @param <V> the value type
- */
-public abstract class AbstractIdMap<V> implements IdMap<V> {
-  protected final Int2ObjectMap<V> idToV;
-  protected final Object2IntMap<V> vToId;
+import java.util.OptionalInt;
 
-  protected AbstractIdMap(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId) {
-    this.idToV = idToV;
-    this.vToId = vToId;
+// TODO: javadocs
+public class IdRegistryImpl<K, V> implements ForwardingRegistry<K, V>, IdRegistry<K, V> {
+  private final Registry<K, V> registry;
+  protected final IncrementalIdMap<V> ids;
+
+  protected IdRegistryImpl(final @NonNull Registry<K, V> registry, final @NonNull IncrementalIdMap<V> ids) {
+    this.registry = registry;
+    this.ids = ids;
   }
 
   @Override
-  public final @NonNull V put(final int id, final @NonNull V value) {
-    this.put0(id, value);
+  public @NonNull Registry<K, V> registry() {
+    return this.registry;
+  }
+
+  @Override
+  public @NonNull V register(final @NonNull K key, final @NonNull V value) {
+    return this.register(this.ids.next(), key, value);
+  }
+
+  @Override
+  public @NonNull V register(final int id, final @NonNull K key, final @NonNull V value) {
+    this.ids.put(id, value);
+    this.registry.register(key, value);
     return value;
   }
 
-  protected void put0(final int id, final @NonNull V value) {
-    this.idToV.put(id, value);
-    this.vToId.put(value, id);
+  @Override
+  public @NonNull OptionalInt id(final @NonNull V value) {
+    return this.ids.id(value);
   }
 
   @Override
-  public @Nullable V get(final int id) {
-    return this.idToV.get(id);
+  public @Nullable V byId(final int id) {
+    return this.ids.get(id);
   }
 }

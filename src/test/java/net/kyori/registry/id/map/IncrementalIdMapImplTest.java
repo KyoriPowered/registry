@@ -21,43 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.map;
+package net.kyori.registry.id.map;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.junit.jupiter.api.Test;
 
-import java.util.function.IntPredicate;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * A simple implementation of an incremental id map.
- *
- * @param <V> the value type
- */
-public class IncrementalIdMapImpl<V> extends IdMapImpl<V> implements IncrementalIdMap<V> {
-  private int nextId;
-
-  public IncrementalIdMapImpl(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
-    super(idToV, vToId, empty);
-  }
-
-  @Override
-  public int next() {
-    return this.nextId;
-  }
-
-  @Override
-  public int put(@NonNull final V value) {
-    final int id = this.nextId;
-    this.put(id, value);
-    return id;
-  }
-
-  @Override
-  protected void put0(final int id, @NonNull final V value) {
-    super.put0(id, value);
-    if(this.nextId <= id) {
-      this.nextId = id + 1;
+class IncrementalIdMapImplTest {
+  private static final int DEFAULT = -1000;
+  @SuppressWarnings("serial")
+  private final IncrementalIdMap<String> map = IncrementalIdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
+    {
+      this.defaultReturnValue(DEFAULT);
     }
+  }, value -> value == -1000);
+
+  @Test
+  void testPut() {
+    final int i0 = this.map.put("abc");
+    assertEquals(0, i0);
+    assertEquals("abc", this.map.get(i0));
+    final int i1 = this.map.put("def");
+    assertEquals(1, i1);
+    assertEquals("def", this.map.get(i1));
+    assertEquals("abc", this.map.get(i0));
   }
 }

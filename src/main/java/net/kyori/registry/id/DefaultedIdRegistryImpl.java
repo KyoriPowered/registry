@@ -21,22 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id;
 
-import net.kyori.registry.map.IncrementalIdMap;
+import net.kyori.registry.Registry;
+import net.kyori.registry.id.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.OptionalInt;
 
-public class DefaultedIdRegistryImpl<K, V> extends IdRegistryImpl<K, V> implements DefaultedIdRegistryGetter<K, V>, DefaultedRegistryGetter<K, V> {
+// TODO: javadocs
+public class DefaultedIdRegistryImpl<K, V> extends IdRegistryImpl<K, V> implements DefaultedIdRegistry<K, V> {
   private Registry<K, V> registry;
   private final K defaultKey;
   private @MonotonicNonNull V defaultValue;
   private int defaultId;
 
-  protected DefaultedIdRegistryImpl(final Registry<K, V> registry, final @NonNull K defaultKey, final @NonNull IncrementalIdMap<V> ids) {
+  protected DefaultedIdRegistryImpl(final @NonNull Registry<K, V> registry, final @NonNull IncrementalIdMap<V> ids, final @NonNull K defaultKey) {
     super(registry, ids);
     this.registry = registry;
     this.defaultKey = defaultKey;

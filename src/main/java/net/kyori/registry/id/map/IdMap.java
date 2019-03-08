@@ -21,36 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id.map;
 
-import net.kyori.registry.map.IncrementalIdMap;
-import org.junit.jupiter.api.Test;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import java.util.function.IntPredicate;
 
-class IdRegistryImplTest {
-  private static final int DEFAULT = -1000;
-  private final IdRegistryImpl<String, String> registry = new IdRegistryImpl<>(
-    Registry.create(),
-    IncrementalIdMap.create(DEFAULT)
-  );
-
-  @Test
-  void testRegister() {
-    assertNull(this.registry.get("foo"));
-    assertEquals(DEFAULT, this.registry.id("bar").orElse(DEFAULT));
-    this.registry.register(32, "foo", "bar");
-    assertEquals("bar", this.registry.get("foo"));
-    assertEquals("foo", this.registry.key("bar"));
-    assertEquals(32, this.registry.id("bar").orElse(DEFAULT));
-
-    // check incremental
-    assertNull(this.registry.get("abc"));
-    this.registry.register("abc", "def");
-    assertEquals("def", this.registry.get("abc"));
-    assertEquals("abc", this.registry.key("def"));
-    assertEquals(33, this.registry.id("def").orElse(DEFAULT));
-    assertEquals("def", this.registry.byId(33));
+/**
+ * An id map.
+ *
+ * @param <V> the value type
+ */
+public interface IdMap<V> extends IdMapGetter<V> {
+  /**
+   * Creates an id map.
+   *
+   * @param idToV the id to value map
+   * @param vToId the value to id map
+   * @param empty emptiness checker
+   * @param <V>   the value type
+   * @return an id map
+   */
+  static <V> @NonNull IdMap<V> create(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
+    return new IdMapImpl<>(idToV, vToId, empty);
   }
+
+  /**
+   * Associates {@code value} with {@code id}.
+   *
+   * @param id    the id
+   * @param value the value
+   * @return the value
+   */
+  @NonNull V put(final int id, final @NonNull V value);
 }

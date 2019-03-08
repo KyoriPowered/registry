@@ -21,39 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.map;
+package net.kyori.registry.id.map;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.function.IntPredicate;
+import java.util.OptionalInt;
 
 /**
- * An id map.
+ * A readable id map.
  *
  * @param <V> the value type
  */
-public interface IdMap<V> extends IdMapGetter<V> {
+public interface IdMapGetter<V> {
   /**
-   * Creates an id map.
+   * Gets a value by its id.
    *
-   * @param idToV the id to value map
-   * @param vToId the value to id map
-   * @param empty emptiness checker
-   * @param <V>   the value type
-   * @return an id map
-   */
-  static <V> @NonNull IdMap<V> create(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
-    return new IdMapImpl<>(idToV, vToId, empty);
-  }
-
-  /**
-   * Associates {@code value} with {@code id}.
-   *
-   * @param id    the id
-   * @param value the value
+   * @param id the id
    * @return the value
    */
-  @NonNull V put(final int id, final @NonNull V value);
+  @Nullable V get(final int id);
+
+  /**
+   * Gets the id for {@code value}.
+   *
+   * @param value the value
+   * @return the id
+   */
+  @NonNull OptionalInt id(final @NonNull V value);
 }

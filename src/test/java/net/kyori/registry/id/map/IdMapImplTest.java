@@ -21,32 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.map;
+package net.kyori.registry.id.map;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.junit.jupiter.api.Test;
 
-import java.util.OptionalInt;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-/**
- * A readable id map.
- *
- * @param <V> the value type
- */
-public interface IdMapGetter<V> {
-  /**
-   * Gets a value by its id.
-   *
-   * @param id the id
-   * @return the value
-   */
-  @Nullable V get(final int id);
+class IdMapImplTest {
+  private static final int DEFAULT = -1000;
+  @SuppressWarnings("serial")
+  private final IdMap<String> map = IdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
+    {
+      this.defaultReturnValue(DEFAULT);
+    }
+  }, value -> value == -1000);
 
-  /**
-   * Gets the id for {@code value}.
-   *
-   * @param value the value
-   * @return the id
-   */
-  @NonNull OptionalInt id(final @NonNull V value);
+  @Test
+  void testId() {
+    assertFalse(this.map.id("foo").isPresent());
+    this.map.put(32, "foo");
+    assertEquals(32, this.map.id("foo").orElse(DEFAULT));
+  }
+
+  @Test
+  void testGet() {
+    assertNull(this.map.get(32));
+    this.map.put(32, "foo");
+    assertEquals("foo", this.map.get(32));
+  }
 }

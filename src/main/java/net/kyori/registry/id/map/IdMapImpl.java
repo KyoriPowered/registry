@@ -21,47 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id.map;
 
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.OptionalInt;
+import java.util.function.IntPredicate;
+
 /**
- * A {@link DefaultedRegistryImpl} is an extension of a {@link RegistryImpl}. This type of registry provides
- * a default value, as registered, for missing keys.
+ * A simple implementation of an id map.
  *
- * @param <K> the key type
  * @param <V> the value type
  */
-public class DefaultedRegistryImpl<K, V> implements DefaultedRegistry<K, V>, ForwardingRegistry<K, V> {
-  private final Registry<K, V> registry;
-  private final K defaultKey;
-  private @MonotonicNonNull V defaultValue;
+public class IdMapImpl<V> extends AbstractIdMap<V> {
+  private final IntPredicate empty;
 
-  protected DefaultedRegistryImpl(final @NonNull Registry<K, V> registry, final @NonNull K defaultKey) {
-    this.registry = registry;
-    this.defaultKey = defaultKey;
-
-    registry.addRegistrationListener((key, value) -> {
-      if(defaultKey.equals(key)) {
-        this.defaultValue = value;
-      }
-    });
+  public IdMapImpl(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
+    super(idToV, vToId);
+    this.empty = empty;
   }
 
   @Override
-  public @NonNull Registry<K, V> registry() {
-    return this.registry;
-  }
-
-  @Override
-  public @NonNull K defaultKey() {
-    return this.defaultKey;
-  }
-
-  @Override
-  public @NonNull V get(final @NonNull K key) {
-    final V value = this.registry.get(key);
-    return value != null ? value : this.defaultValue;
+  public @NonNull OptionalInt id(final @NonNull V value) {
+    final int id = this.vToId.getInt(value);
+    if(!this.empty.test(id)) {
+      return OptionalInt.of(id);
+    }
+    return OptionalInt.empty();
   }
 }

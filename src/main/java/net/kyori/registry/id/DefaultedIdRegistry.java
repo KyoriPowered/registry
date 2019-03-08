@@ -21,36 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.map;
+package net.kyori.registry.id;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import org.junit.jupiter.api.Test;
+import net.kyori.registry.Registry;
+import net.kyori.registry.id.map.IncrementalIdMap;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
-class IdMapImplTest {
-  private static final int DEFAULT = -1000;
-  @SuppressWarnings("serial")
-  private final IdMap<String> map = IdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
-    {
-      this.defaultReturnValue(DEFAULT);
-    }
-  }, value -> value == -1000);
-
-  @Test
-  void testId() {
-    assertFalse(this.map.id("foo").isPresent());
-    this.map.put(32, "foo");
-    assertEquals(32, this.map.id("foo").orElse(DEFAULT));
+// TODO: javadocs
+public interface DefaultedIdRegistry<K, V> extends DefaultedIdRegistryGetter<K, V>, IdRegistry<K, V> {
+  // TODO: javadocs
+  static <K, V> @NonNull DefaultedIdRegistry<K, V> create(final @NonNull IncrementalIdMap<V> ids, final @NonNull K defaultKey) {
+    return create(Registry.create(), ids, defaultKey);
   }
 
-  @Test
-  void testGet() {
-    assertNull(this.map.get(32));
-    this.map.put(32, "foo");
-    assertEquals("foo", this.map.get(32));
+  // TODO: javadocs
+  static <K, V> @NonNull DefaultedIdRegistry<K, V> create(final @NonNull Registry<K, V> registry, final @NonNull IncrementalIdMap<V> ids, final @NonNull K defaultKey) {
+    return new DefaultedIdRegistryImpl<>(registry, ids, defaultKey);
   }
 }

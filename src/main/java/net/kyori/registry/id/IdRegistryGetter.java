@@ -21,59 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id;
 
-import net.kyori.registry.map.IncrementalIdMap;
+import net.kyori.registry.RegistryGetter;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.OptionalInt;
 
-public class IdRegistryImpl<K, V> implements ForwardingRegistry<K, V> {
-  private final Registry<K, V> registry;
-  protected final IncrementalIdMap<V> ids;
-
-  protected IdRegistryImpl(final @NonNull Registry<K, V> registry, final @NonNull IncrementalIdMap<V> ids) {
-    this.registry = registry;
-    this.ids = ids;
-  }
-
-  @Override
-  public @NonNull Registry<K, V> registry() {
-    return this.registry;
-  }
-
-  @Override
-  public @NonNull V register(final @NonNull K key, final @NonNull V value) {
-    return this.register(this.ids.next(), key, value);
-  }
-
-  // TODO: should be an interface method that we implement
-  public @NonNull V register(final int id, final @NonNull K key, final @NonNull V value) {
-    this.ids.put(id, value);
-    this.registry.register(key, value);
-    return value;
-  }
-
-  // TODO: should be an interface method that we implement
-  /**
-   * Gets the id for {@code value}.
-   *
-   * @param value the value
-   * @return the id
-   */
-  public @NonNull OptionalInt id(final @NonNull V value) {
-    return this.ids.id(value);
-  }
-
-  // TODO: should be an interface method that we implement
+// TODO: javadocs
+public interface IdRegistryGetter<K, V> extends RegistryGetter<K, V> {
   /**
    * Gets the value for {@code id}.
    *
    * @param id the id
    * @return the value
    */
-  public @Nullable V byId(final int id) {
-    return this.ids.get(id);
-  }
+  @Nullable V byId(final int id);
+
+  /**
+   * Gets the id for {@code value}.
+   *
+   * @param value the value
+   * @return the id
+   */
+  @NonNull OptionalInt id(final @NonNull V value);
 }

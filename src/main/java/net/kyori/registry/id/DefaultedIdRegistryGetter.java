@@ -21,31 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.map;
+package net.kyori.registry.id;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import org.junit.jupiter.api.Test;
+import net.kyori.registry.DefaultedRegistryGetter;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-class IncrementalIdMapImplTest {
-  private static final int DEFAULT = -1000;
-  @SuppressWarnings("serial")
-  private final IncrementalIdMap<String> map = IncrementalIdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
-    {
-      this.defaultReturnValue(DEFAULT);
-    }
-  }, value -> value == -1000);
-
-  @Test
-  void testPut() {
-    final int i0 = this.map.put("abc");
-    assertEquals(0, i0);
-    assertEquals("abc", this.map.get(i0));
-    final int i1 = this.map.put("def");
-    assertEquals(1, i1);
-    assertEquals("def", this.map.get(i1));
-    assertEquals("abc", this.map.get(i0));
-  }
+/**
+ * A read-only component of an id registry with a default key and value.
+ *
+ * @param <K> the key type
+ * @param <V> the value type
+ */
+public interface DefaultedIdRegistryGetter<K, V> extends DefaultedRegistryGetter<K, V> {
+  /**
+   * Gets the id for {@code value}.
+   *
+   * @param value the value
+   * @return the id
+   */
+  int idOrDefault(final @NonNull V value);
 }

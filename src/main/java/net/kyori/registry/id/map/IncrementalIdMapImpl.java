@@ -21,22 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id.map;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.function.IntPredicate;
+
 /**
- * A read-only component of an id registry with a default key and value.
+ * A simple implementation of an incremental id map.
  *
- * @param <K> the key type
  * @param <V> the value type
  */
-public interface DefaultedIdRegistryGetter<K, V> extends DefaultedRegistryGetter<K, V> {
-  /**
-   * Gets the id for {@code value}.
-   *
-   * @param value the value
-   * @return the id
-   */
-  int idOrDefault(final @NonNull V value);
+public class IncrementalIdMapImpl<V> extends IdMapImpl<V> implements IncrementalIdMap<V> {
+  private int nextId;
+
+  public IncrementalIdMapImpl(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
+    super(idToV, vToId, empty);
+  }
+
+  @Override
+  public int next() {
+    return this.nextId;
+  }
+
+  @Override
+  public int put(@NonNull final V value) {
+    final int id = this.nextId;
+    this.put(id, value);
+    return id;
+  }
+
+  @Override
+  protected void put0(final int id, @NonNull final V value) {
+    super.put0(id, value);
+    if(this.nextId <= id) {
+      this.nextId = id + 1;
+    }
+  }
 }
