@@ -24,7 +24,7 @@
 package net.kyori.registry;
 
 import com.google.common.collect.ImmutableList;
-import net.kyori.registry.api.IRegistry;
+import net.kyori.registry.api.Registry;
 import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RegistryTest {
     @Test
     void testGetPut() {
-        final Registry<String, String> registry = new Registry<>();
+        final Registry<String, String> registry = Registry.create();
         assertNull(registry.get("aaa"));
         registry.register("aaa", "bbb");
         assertEquals("bbb", registry.get("aaa"));
@@ -44,7 +44,7 @@ class RegistryTest {
 
     @Test
     void testKeySet() {
-        final Registry<String, String> registryImpl = new Registry<>();
+        final Registry<String, String> registryImpl = Registry.create();
         assertThat(registryImpl.keySet()).isEmpty();
         registryImpl.register("eee", "fff");
         registryImpl.register("aaa", "bbb");
@@ -54,7 +54,7 @@ class RegistryTest {
 
     @Test
     void testIterator() {
-        final Registry<String, String> registryImpl = new Registry<>();
+        final Registry<String, String> registryImpl = Registry.create();
         assertThat(ImmutableList.copyOf(registryImpl.iterator())).isEmpty();
         registryImpl.register("eee", "fff");
         registryImpl.register("aaa", "bbb");
@@ -64,7 +64,7 @@ class RegistryTest {
 
     @Test
     void testIteratorRemove() {
-        final Registry<String, String> registryImpl = new Registry<>();
+        final Registry<String, String> registryImpl = Registry.create();
         registryImpl.register("aaa", "bbb");
         final Iterator<String> it = registryImpl.iterator();
         assertTrue(it.hasNext());
@@ -74,7 +74,7 @@ class RegistryTest {
 
     @Test
     void testStream() {
-        final Registry<String, String> registryImpl = new Registry<>();
+        final Registry<String, String> registryImpl = Registry.create();
         assertThat(registryImpl.stream()).isEmpty();
         registryImpl.register("eee", "fff");
         registryImpl.register("aaa", "bbb");

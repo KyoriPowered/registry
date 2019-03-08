@@ -25,9 +25,8 @@ package net.kyori.registry.id;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.kyori.registry.BiRegistry;
 import net.kyori.registry.DefaultValueIdRegistry;
-import net.kyori.registry.api.IBiRegistry;
+import net.kyori.registry.api.Registry;
 import net.kyori.registry.api.map.IncrementalIdMap;
 import org.junit.jupiter.api.Test;
 
@@ -40,8 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class DefaultValueIdBiRegistryTest {
     private static final int DEFAULT = -1000;
 
-    private final DefaultValueIdRegistry<String, String> container = new DefaultValueIdRegistry<>(
-            new BiRegistry<>(),
+    private final DefaultValueIdRegistry<String, String> registry = new DefaultValueIdRegistry<>(
+            Registry.create(),
             "_default",
             IncrementalIdMap.create(
                     new Int2ObjectOpenHashMap<>(),
@@ -54,28 +53,26 @@ class DefaultValueIdBiRegistryTest {
 
     @Test
     void testRegister() {
-        assertNull(container.getRegistry().get("_default"));
+        assertNull(registry.get("_default"));
 
-        IBiRegistry registry = (IBiRegistry) container.getRegistry();
+        assertEquals(DEFAULT, registry.id("bar").orElse(DEFAULT));
 
-        assertEquals(DEFAULT, container.id("bar").orElse(DEFAULT));
-
-        container.register(32, "_default", "bar");
+        registry.register(32, "_default", "bar");
 
         assertEquals("bar", registry.get("_default"));
         assertEquals("_default", registry.key("bar"));
-        assertEquals(32, container.id("bar").orElse(DEFAULT));
+        assertEquals(32, registry.id("bar").orElse(DEFAULT));
 
         // default is now in, let's check
-        assertEquals(32, container.idOrDefault(UUID.randomUUID().toString()));
-        assertEquals("bar", container.byId(ThreadLocalRandom.current().nextInt()));
+        assertEquals(32, registry.idOrDefault(UUID.randomUUID().toString()));
+        assertEquals("bar", registry.byId(ThreadLocalRandom.current().nextInt()));
 
         // check incremental
         assertNull(registry.get("abc"));
-        container.register("abc", "def");
+        registry.register("abc", "def");
         assertEquals("def", registry.get("abc"));
         assertEquals("abc", registry.key("def"));
-        assertEquals(33, container.id("def").orElse(DEFAULT));
-        assertEquals("def", container.byId(33));
+        assertEquals(33, registry.id("def").orElse(DEFAULT));
+        assertEquals("def", registry.byId(33));
     }
 }

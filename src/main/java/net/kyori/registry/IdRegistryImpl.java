@@ -23,24 +23,23 @@
  */
 package net.kyori.registry;
 
-import net.kyori.registry.api.IRegistry;
+import net.kyori.registry.api.Registry;
 import net.kyori.registry.api.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.Iterator;
 import java.util.OptionalInt;
+import java.util.Set;
+import java.util.function.BiConsumer;
 
-public class IdRegistry<K, V> {
-    private final IRegistry<K, V> registry;
+public class IdRegistryImpl<K, V> implements Registry<K, V> {
+    private final Registry<K, V> registry;
     protected final IncrementalIdMap<V> ids;
 
-    public IdRegistry(final @NonNull IRegistry<K, V> registry, final @NonNull IncrementalIdMap<V> ids) {
+    public IdRegistryImpl(final @NonNull Registry<K, V> registry, final @NonNull IncrementalIdMap<V> ids) {
         this.registry = registry;
         this.ids = ids;
-    }
-
-    public final IRegistry<K, V> getRegistry() {
-        return registry;
     }
 
     public @NonNull V register(final @NonNull K key, @NonNull V value) {
@@ -49,8 +48,35 @@ public class IdRegistry<K, V> {
 
     public @NonNull V register(final int id, final @NonNull K key, @NonNull V value) {
         ids.put(id, value);
-        getRegistry().register(key, value);
+        registry.register(key, value);
         return value;
+    }
+
+    @Override
+    public void addRegistrationListener(@NonNull BiConsumer<K, V> listener) {
+        registry.addRegistrationListener(listener);
+    }
+
+    @Nullable
+    @Override
+    public V get(@NonNull K key) {
+        return registry.get(key);
+    }
+
+    @Override
+    public @NonNull Set<K> keySet() {
+        return registry.keySet();
+    }
+
+    @Nullable
+    @Override
+    public K key(@NonNull V value) {
+        return registry.key(value);
+    }
+
+    @Override
+    public @NonNull Iterator<V> iterator() {
+        return registry.iterator();
     }
 
     /**

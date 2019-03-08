@@ -23,6 +23,7 @@
  */
 package net.kyori.registry;
 
+import net.kyori.registry.api.Registry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultValueRegistryTest {
     @Test
     void testDefaultKeyValue() {
-        final DefaultValueRegistry<String, String> container = new DefaultValueRegistry<>(new Registry<>(), "_default");
+        final DefaultValueRegistry<String, String> container = new DefaultValueRegistry<>(Registry.create(), "_default");
         assertEquals("_default", container.defaultKey());
 
         assertNull(container.get("aaa"));

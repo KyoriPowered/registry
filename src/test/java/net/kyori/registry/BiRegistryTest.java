@@ -24,7 +24,7 @@
 package net.kyori.registry;
 
 import com.google.common.collect.ImmutableList;
-import net.kyori.registry.api.IBiRegistry;
+import net.kyori.registry.api.Registry;
 import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BiRegistryTest {
     @Test
     void testGetKey() {
-        final IBiRegistry<String, String> registry = new BiRegistry<>();
+        final Registry<String, String> registry = Registry.create();
         assertNull(registry.key("bbb"));
         registry.register("aaa", "bbb");
         assertEquals("aaa", registry.key("bbb"));
@@ -43,7 +43,7 @@ class BiRegistryTest {
 
     @Test
     void testGetValue() {
-        final IBiRegistry<String, String> registry = new BiRegistry<>();
+        final Registry<String, String> registry = Registry.create();
         assertNull(registry.get("aaa"));
         registry.register("aaa", "bbb");
         assertEquals("bbb", registry.get("aaa"));
@@ -51,7 +51,7 @@ class BiRegistryTest {
 
     @Test
     void testKeySet() {
-        final IBiRegistry<String, String> registry = new BiRegistry<>();
+        final Registry<String, String> registry = Registry.create();
         assertThat(registry.keySet()).isEmpty();
         registry.register("eee", "fff");
         registry.register("aaa", "bbb");
@@ -61,7 +61,7 @@ class BiRegistryTest {
 
     @Test
     void testIterator() {
-        final IBiRegistry<String, String> registry = new BiRegistry<>();
+        final Registry<String, String> registry = Registry.create();
         assertThat(ImmutableList.copyOf(registry.iterator())).isEmpty();
         registry.register("eee", "fff");
         registry.register("aaa", "bbb");
@@ -71,7 +71,7 @@ class BiRegistryTest {
 
     @Test
     void testIteratorRemove() {
-        final IBiRegistry<String, String> registry = new BiRegistry<>();
+        final Registry<String, String> registry = Registry.create();
         registry.register("aaa", "bbb");
         final Iterator<String> it = registry.iterator();
         assertTrue(it.hasNext());

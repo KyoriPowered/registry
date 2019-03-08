@@ -23,7 +23,7 @@
  */
 package net.kyori.registry;
 
-import net.kyori.registry.api.IRegistry;
+import net.kyori.registry.api.Registry;
 import net.kyori.registry.api.WithDefaultValue;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -34,19 +34,19 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 
 /**
- * A {@link DefaultValueRegistry} is an extension of a {@link Registry}. This type of registry provides
+ * A {@link DefaultValueRegistry} is an extension of a {@link RegistryImpl}. This type of registry provides
  * a default values, as registered, for missing keys.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public class DefaultValueRegistry<K, V> implements IRegistry<K, V>, WithDefaultValue<K, V> {
-    private final IRegistry<K, V> registry;
+public class DefaultValueRegistry<K, V> implements Registry<K, V>, WithDefaultValue<K, V> {
+    private final Registry<K, V> registry;
     private final K defaultKey;
     @MonotonicNonNull
     private V defaultValue;
 
-    public DefaultValueRegistry(IRegistry<K, V> registry, final @NonNull K defaultKey) {
+    public DefaultValueRegistry(Registry<K, V> registry, final @NonNull K defaultKey) {
         registry.addRegistrationListener((key, value) -> {
             if (defaultKey.equals(key)) {
                 this.defaultValue = value;
@@ -55,10 +55,6 @@ public class DefaultValueRegistry<K, V> implements IRegistry<K, V>, WithDefaultV
 
         this.registry = registry;
         this.defaultKey = defaultKey;
-    }
-
-    public IRegistry<K, V> getRegistry() {
-        return registry;
     }
 
     @Override
@@ -80,6 +76,11 @@ public class DefaultValueRegistry<K, V> implements IRegistry<K, V>, WithDefaultV
     @Override
     public @NonNull Set<K> keySet() {
         return registry.keySet();
+    }
+
+    @Override
+    public @Nullable K key(@NonNull V value) {
+        return registry.key(value);
     }
 
     @Override

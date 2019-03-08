@@ -23,8 +23,10 @@
  */
 package net.kyori.registry;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterators;
-import net.kyori.registry.api.IRegistry;
+import net.kyori.registry.api.Registry;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -34,21 +36,21 @@ import java.util.function.BiConsumer;
 import static java.util.Objects.requireNonNull;
 
 /**
- * An implementation of a {@link IRegistry} that forms a
+ * An implementation of a {@link net.kyori.registry.api.Registry} that forms a
  * simple key-to-value map.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public class Registry<K, V> implements IRegistry<K, V> {
-    protected final Map<K, V> map;
+public class RegistryImpl<K, V> implements Registry<K, V> {
+    protected final BiMap<K, V> map;
     private final List<BiConsumer<K, V>> registrationListeners = new ArrayList<>();
 
-    public Registry() {
-        this(new HashMap<>());
+    public RegistryImpl() {
+        this(HashBiMap.create());
     }
 
-    public Registry(Map<K, V> map) {
+    public RegistryImpl(BiMap<K, V> map) {
         this.map = map;
     }
 
@@ -77,6 +79,12 @@ public class Registry<K, V> implements IRegistry<K, V> {
     @Override
     public @NonNull Set<K> keySet() {
         return Collections.unmodifiableSet(map.keySet());
+    }
+
+    @Nullable
+    @Override
+    public K key(@NonNull V value) {
+        return map.inverse().get(value);
     }
 
     @Override
