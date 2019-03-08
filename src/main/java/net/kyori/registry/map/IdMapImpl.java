@@ -21,38 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.map;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.function.BiConsumer;
+import java.util.OptionalInt;
+import java.util.function.IntPredicate;
 
-public interface Registry<K, V> extends RegistryGetter<K, V> {
-  /**
-   * Creates a new registry.
-   *
-   * @param <K> the key type
-   * @param <V> the value type
-   * @return a new registry
-   */
-  static <K, V> @NonNull RegistryImpl<K, V> create() {
-    return new RegistryImpl<>();
+/**
+ * A simple implementation of an id map.
+ *
+ * @param <V> the value type
+ */
+public class IdMapImpl<V> extends AbstractIdMap<V> {
+  private final IntPredicate empty;
+
+  public IdMapImpl(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
+    super(idToV, vToId);
+    this.empty = empty;
   }
 
-  /**
-   * Associates {@code key} to {@code value}.
-   *
-   * @param key   the key
-   * @param value the value
-   * @return the value
-   */
-  @NonNull V register(final @NonNull K key, final @NonNull V value);
-
-  /**
-   * Adds a callback function that will be executed after any call to
-   * {@link Registry#register(Object, Object)}
-   *
-   * @param listener the callback function
-   */
-  void addRegistrationListener(final @NonNull BiConsumer<K, V> listener);
+  @Override
+  public @NonNull OptionalInt id(final @NonNull V value) {
+    final int id = this.vToId.getInt(value);
+    if(!this.empty.test(id)) {
+      return OptionalInt.of(id);
+    }
+    return OptionalInt.empty();
+  }
 }

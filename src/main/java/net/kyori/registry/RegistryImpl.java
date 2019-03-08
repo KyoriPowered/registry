@@ -21,12 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.impl.registry;
+package net.kyori.registry;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterators;
-import net.kyori.registry.Registry;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -51,11 +50,11 @@ public class RegistryImpl<K, V> implements Registry<K, V> {
   protected final BiMap<K, V> map;
   private @MonotonicNonNull List<BiConsumer<K, V>> registrationListeners;
 
-  public RegistryImpl() {
+  protected RegistryImpl() {
     this(HashBiMap.create());
   }
 
-  public RegistryImpl(final @NonNull BiMap<K, V> map) {
+  protected RegistryImpl(final @NonNull BiMap<K, V> map) {
     this.map = map;
   }
 
@@ -74,7 +73,7 @@ public class RegistryImpl<K, V> implements Registry<K, V> {
   }
 
   @Override
-  public void addRegistrationListener(@NonNull BiConsumer<K, V> listener) {
+  public void addRegistrationListener(final @NonNull BiConsumer<K, V> listener) {
     if(this.registrationListeners == null) {
       this.registrationListeners = new ArrayList<>();
     }

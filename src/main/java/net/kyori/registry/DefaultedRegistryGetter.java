@@ -25,8 +25,27 @@ package net.kyori.registry;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+/**
+ * A read-only view of a registry with a default key and value.
+ *
+ * @param <K> the key type
+ * @param <V> the value type
+ * @see DefaultedRegistry
+ */
 public interface DefaultedRegistryGetter<K, V> extends RegistryGetter<K, V> {
+  /**
+   * Gets the default key.
+   *
+   * @return the default key
+   */
   @NonNull K defaultKey();
 
-  @NonNull V getOrDefault(final @NonNull K key);
+  /**
+   * Gets the value to which the specified key is mapped, or the default value if this registry contains no mapping for the key.
+   *
+   * @param key the key
+   * @return the value
+   */
+  @Override
+  @NonNull V get(@NonNull final K key);
 }

@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class IncrementalIdMapImplTest {
   private static final int DEFAULT = -1000;
+  @SuppressWarnings("serial")
   private final IncrementalIdMap<String> map = IncrementalIdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
     {
       this.defaultReturnValue(DEFAULT);

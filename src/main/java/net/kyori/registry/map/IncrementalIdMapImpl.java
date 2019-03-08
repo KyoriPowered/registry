@@ -21,41 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.impl.map;
+package net.kyori.registry.map;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.kyori.registry.map.IdMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.function.IntPredicate;
 
 /**
- * An abstract implementation of an id map.
+ * A simple implementation of an incremental id map.
  *
  * @param <V> the value type
  */
-public abstract class AbstractIdMap<V> implements IdMap<V> {
-  protected final Int2ObjectMap<V> idToV;
-  protected final Object2IntMap<V> vToId;
+public class IncrementalIdMapImpl<V> extends IdMapImpl<V> implements IncrementalIdMap<V> {
+  private int nextId;
 
-  protected AbstractIdMap(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId) {
-    this.idToV = idToV;
-    this.vToId = vToId;
+  public IncrementalIdMapImpl(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
+    super(idToV, vToId, empty);
   }
 
   @Override
-  public final @NonNull V put(final int id, final @NonNull V value) {
-    this.put0(id, value);
-    return value;
-  }
-
-  protected void put0(final int id, final @NonNull V value) {
-    this.idToV.put(id, value);
-    this.vToId.put(value, id);
+  public int next() {
+    return this.nextId;
   }
 
   @Override
-  public @Nullable V get(final int id) {
-    return this.idToV.get(id);
+  public int put(@NonNull final V value) {
+    final int id = this.nextId;
+    this.put(id, value);
+    return id;
+  }
+
+  @Override
+  protected void put0(final int id, @NonNull final V value) {
+    super.put0(id, value);
+    if(this.nextId <= id) {
+      this.nextId = id + 1;
+    }
   }
 }

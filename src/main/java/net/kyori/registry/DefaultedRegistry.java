@@ -21,44 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.impl.map;
+package net.kyori.registry;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.kyori.registry.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.function.IntPredicate;
-
 /**
- * A simple implementation of an incremental id map.
+ * A registry with a default key and value.
  *
+ * @param <K> the key type
  * @param <V> the value type
  */
-public class IncrementalIdMapImpl<V> extends IdMapImpl<V> implements IncrementalIdMap<V> {
-  private int nextId;
-
-  public IncrementalIdMapImpl(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
-    super(idToV, vToId, empty);
-  }
-
-  @Override
-  public int next() {
-    return this.nextId;
-  }
-
-  @Override
-  public int put(@NonNull final V value) {
-    final int id = this.nextId;
-    this.put(id, value);
-    return id;
-  }
-
-  @Override
-  protected void put0(final int id, @NonNull final V value) {
-    super.put0(id, value);
-    if(this.nextId <= id) {
-      this.nextId = id + 1;
-    }
+public interface DefaultedRegistry<K, V> extends DefaultedRegistryGetter<K, V>, Registry<K, V> {
+  /**
+   * Creates a new registry with a default key.
+   *
+   * @param registry the backing registry
+   * @param defaultKey the default key
+   * @param <K> the key type
+   * @param <V> the value type
+   * @return a new bidirectional registry
+   */
+  static <K, V> @NonNull DefaultedRegistry<K, V> create(final @NonNull Registry<K, V> registry, final @NonNull K defaultKey) {
+    return new DefaultedRegistryImpl<>(registry, defaultKey);
   }
 }

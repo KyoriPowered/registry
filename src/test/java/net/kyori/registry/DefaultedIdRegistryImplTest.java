@@ -23,7 +23,6 @@
  */
 package net.kyori.registry;
 
-import net.kyori.registry.impl.registry.DefaultedIdRegistryImpl;
 import net.kyori.registry.map.IncrementalIdMap;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +30,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DefaultedIdRegistryImplTest {
   private static final int DEFAULT = -1000;
@@ -43,7 +42,7 @@ class DefaultedIdRegistryImplTest {
 
   @Test
   void testRegister() {
-    assertNull(this.registry.get("_default"));
+    assertEquals("The default value for key '_default' has not been registered yet!", assertThrows(IllegalStateException.class, () -> this.registry.get("_default")).getMessage());
 
     assertEquals(DEFAULT, this.registry.id("bar").orElse(DEFAULT));
 
@@ -58,7 +57,7 @@ class DefaultedIdRegistryImplTest {
     assertEquals("bar", this.registry.byId(ThreadLocalRandom.current().nextInt()));
 
     // check incremental
-    assertNull(this.registry.get("abc"));
+    assertEquals("bar", this.registry.get("abc"));
     this.registry.register("abc", "def");
     assertEquals("def", this.registry.get("abc"));
     assertEquals("abc", this.registry.key("def"));

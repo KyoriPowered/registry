@@ -23,7 +23,6 @@
  */
 package net.kyori.registry;
 
-import net.kyori.registry.impl.registry.IdRegistryImpl;
 import net.kyori.registry.map.IncrementalIdMap;
 import org.junit.jupiter.api.Test;
 

@@ -23,7 +23,6 @@
  */
 package net.kyori.registry;
 
-import net.kyori.registry.impl.registry.DefaultedRegistryImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,6 +42,6 @@ class DefaultedRegistryImplTest {
     assertEquals("bbb", container.get("aaa"));
 
     assertNotNull(container.get("ccc"));
-    assertEquals("bbb", container.getOrDefault("ccc"));
+    assertEquals("bbb", container.get("ccc"));
   }
 }

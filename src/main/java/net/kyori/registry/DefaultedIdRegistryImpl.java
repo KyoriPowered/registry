@@ -21,11 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.impl.registry;
+package net.kyori.registry;
 
-import net.kyori.registry.DefaultedIdRegistryGetter;
-import net.kyori.registry.DefaultedRegistryGetter;
-import net.kyori.registry.Registry;
 import net.kyori.registry.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -39,7 +36,7 @@ public class DefaultedIdRegistryImpl<K, V> extends IdRegistryImpl<K, V> implemen
   private @MonotonicNonNull V defaultValue;
   private int defaultId;
 
-  public DefaultedIdRegistryImpl(final Registry<K, V> registry, final @NonNull K defaultKey, final @NonNull IncrementalIdMap<V> ids) {
+  protected DefaultedIdRegistryImpl(final Registry<K, V> registry, final @NonNull K defaultKey, final @NonNull IncrementalIdMap<V> ids) {
     super(registry, ids);
     this.registry = registry;
     this.defaultKey = defaultKey;
@@ -58,9 +55,9 @@ public class DefaultedIdRegistryImpl<K, V> extends IdRegistryImpl<K, V> implemen
   }
 
   @Override
-  public @NonNull V getOrDefault(final @NonNull K key) {
+  public @NonNull V get(@NonNull final K key) {
     final V value = this.registry.get(key);
-    return value != null ? value : this.defaultValue;
+    return value != null ? value : this.defaultValue();
   }
 
   @Override
@@ -72,7 +69,14 @@ public class DefaultedIdRegistryImpl<K, V> extends IdRegistryImpl<K, V> implemen
   @Override
   public @Nullable V byId(final int id) {
     final V value = super.byId(id);
-    return value != null ? value : this.defaultValue;
+    return value != null ? value : this.defaultValue();
+  }
+
+  private @NonNull V defaultValue() {
+    if(this.defaultValue == null) {
+      throw new IllegalStateException("The default value for key '" + this.defaultKey + "' has not been registered yet!");
+    }
+    return this.defaultValue;
   }
 }
 

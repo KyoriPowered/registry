@@ -29,7 +29,18 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.util.Iterator;
 import java.util.Set;
 
+/**
+ * A registry getter which forwards all its method calls to another registry getter.
+ *
+ * @param <K> the key type
+ * @param <V> the value type
+ */
 public interface ForwardingRegistryGetter<K, V> extends RegistryGetter<K, V> {
+  /**
+   * Gets the forwarded registry.
+   *
+   * @return the forwarded registry
+   */
   @NonNull RegistryGetter<K, V> registry();
 
   @Override

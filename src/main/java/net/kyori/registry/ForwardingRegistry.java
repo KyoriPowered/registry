@@ -27,6 +27,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.function.BiConsumer;
 
+/**
+ * A registry which forwards all its method calls to another registry.
+ *
+ * @param <K> the key type
+ * @param <V> the value type
+ */
 public interface ForwardingRegistry<K, V> extends ForwardingRegistryGetter<K, V>, Registry<K, V> {
   @Override
   @NonNull Registry<K, V> registry();

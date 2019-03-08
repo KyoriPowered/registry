@@ -31,6 +31,13 @@ import java.util.Set;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+/**
+ * A read-only operation view of a registry.
+ *
+ * @param <K> the key type
+ * @param <V> the value type
+ * @see Registry
+ */
 public interface RegistryGetter<K, V> extends Iterable<V> {
   /**
    * Gets the value for {@code key}.

@@ -21,34 +21,59 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.impl.map;
+package net.kyori.registry;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.kyori.registry.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.OptionalInt;
-import java.util.function.IntPredicate;
 
-/**
- * A simple implementation of an id map.
- *
- * @param <V> the value type
- */
-public class IdMapImpl<V> extends AbstractIdMap<V> {
-  private final IntPredicate empty;
+public class IdRegistryImpl<K, V> implements ForwardingRegistry<K, V> {
+  private final Registry<K, V> registry;
+  protected final IncrementalIdMap<V> ids;
 
-  public IdMapImpl(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
-    super(idToV, vToId);
-    this.empty = empty;
+  protected IdRegistryImpl(final @NonNull Registry<K, V> registry, final @NonNull IncrementalIdMap<V> ids) {
+    this.registry = registry;
+    this.ids = ids;
   }
 
   @Override
+  public @NonNull Registry<K, V> registry() {
+    return this.registry;
+  }
+
+  @Override
+  public @NonNull V register(final @NonNull K key, final @NonNull V value) {
+    return this.register(this.ids.next(), key, value);
+  }
+
+  // TODO: should be an interface method that we implement
+  public @NonNull V register(final int id, final @NonNull K key, final @NonNull V value) {
+    this.ids.put(id, value);
+    this.registry.register(key, value);
+    return value;
+  }
+
+  // TODO: should be an interface method that we implement
+  /**
+   * Gets the id for {@code value}.
+   *
+   * @param value the value
+   * @return the id
+   */
   public @NonNull OptionalInt id(final @NonNull V value) {
-    final int id = this.vToId.getInt(value);
-    if(!this.empty.test(id)) {
-      return OptionalInt.of(id);
-    }
-    return OptionalInt.empty();
+    return this.ids.id(value);
+  }
+
+  // TODO: should be an interface method that we implement
+  /**
+   * Gets the value for {@code id}.
+   *
+   * @param id the id
+   * @return the value
+   */
+  public @Nullable V byId(final int id) {
+    return this.ids.get(id);
   }
 }
