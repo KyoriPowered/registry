@@ -23,7 +23,6 @@
  */
 package net.kyori.registry.id;
 
-import net.kyori.registry.Registry;
 import net.kyori.registry.id.map.IncrementalIdMap;
 import org.junit.jupiter.api.Test;
 
@@ -32,10 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class IdRegistryImplTest {
   private static final int DEFAULT = -1000;
-  private final IdRegistryImpl<String, String> registry = new IdRegistryImpl<>(
-    Registry.create(),
-    IncrementalIdMap.create(DEFAULT)
-  );
+  private final IdRegistryImpl<String, String> registry = new IdRegistryImpl<>(IncrementalIdMap.create(DEFAULT));
 
   @Test
   void testRegister() {

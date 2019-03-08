@@ -47,5 +47,5 @@ public interface DefaultedRegistryGetter<K, V> extends RegistryGetter<K, V> {
    * @return the value
    */
   @Override
-  @NonNull V get(@NonNull final K key);
+  @NonNull V get(final @NonNull K key);
 }

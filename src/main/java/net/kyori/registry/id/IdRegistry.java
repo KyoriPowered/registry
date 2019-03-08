@@ -23,10 +23,23 @@
  */
 package net.kyori.registry.id;
 
+import net.kyori.registry.Registry;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-// TODO: javadocs
-public interface IdRegistry<K, V> extends IdRegistryGetter<K, V> {
-  // TODO: javadocs
+/**
+ * A registry with an {@code int} id to {@code V} mapping.
+ *
+ * @param <K> the key type
+ * @param <V> the value type
+ */
+public interface IdRegistry<K, V> extends IdRegistryGetter<K, V>, Registry<K, V> {
+  /**
+   * Associates {@code id} and {@code key} to {@code value}.
+   *
+   * @param id the id
+   * @param key the key
+   * @param value the value
+   * @return the value
+   */
   @NonNull V register(final int id, final @NonNull K key, final @NonNull V value);
 }

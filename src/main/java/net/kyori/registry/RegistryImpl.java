@@ -47,15 +47,10 @@ import static java.util.Objects.requireNonNull;
  * @param <V> the value type
  */
 public class RegistryImpl<K, V> implements Registry<K, V> {
-  protected final BiMap<K, V> map;
+  protected final BiMap<K, V> map = HashBiMap.create();
   private @MonotonicNonNull List<BiConsumer<K, V>> registrationListeners;
 
   protected RegistryImpl() {
-    this(HashBiMap.create());
-  }
-
-  protected RegistryImpl(final @NonNull BiMap<K, V> map) {
-    this.map = map;
   }
 
   @Override

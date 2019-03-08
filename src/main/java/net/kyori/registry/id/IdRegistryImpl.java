@@ -31,13 +31,17 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.OptionalInt;
 
-// TODO: javadocs
+/**
+ * A simple implementation of a bidirectional id registry.
+ *
+ * @param <K> the key type
+ * @param <V> the value type
+ */
 public class IdRegistryImpl<K, V> implements ForwardingRegistry<K, V>, IdRegistry<K, V> {
-  private final Registry<K, V> registry;
+  protected final Registry<K, V> registry = Registry.create();
   protected final IncrementalIdMap<V> ids;
 
-  protected IdRegistryImpl(final @NonNull Registry<K, V> registry, final @NonNull IncrementalIdMap<V> ids) {
-    this.registry = registry;
+  protected IdRegistryImpl(final @NonNull IncrementalIdMap<V> ids) {
     this.ids = ids;
   }
 

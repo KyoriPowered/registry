@@ -24,7 +24,6 @@
 package net.kyori.registry.id;
 
 import net.kyori.registry.DefaultedRegistry;
-import net.kyori.registry.Registry;
 import net.kyori.registry.id.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -32,19 +31,22 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.OptionalInt;
 
-// TODO: javadocs
+/**
+ * A simple implementation of a bidirectional id registry with a default id, key, and value.
+ *
+ * @param <K> the key type
+ * @param <V> the value type
+ */
 public class DefaultedIdRegistryImpl<K, V> extends IdRegistryImpl<K, V> implements DefaultedIdRegistry<K, V> {
-  private Registry<K, V> registry;
   private final K defaultKey;
   private @MonotonicNonNull V defaultValue;
   private int defaultId;
 
-  protected DefaultedIdRegistryImpl(final @NonNull Registry<K, V> registry, final @NonNull IncrementalIdMap<V> ids, final @NonNull K defaultKey) {
-    super(registry, ids);
-    this.registry = registry;
+  protected DefaultedIdRegistryImpl(final @NonNull IncrementalIdMap<V> ids, final @NonNull K defaultKey) {
+    super(ids);
     this.defaultKey = defaultKey;
 
-    registry.addRegistrationListener((key, value) -> {
+    this.addRegistrationListener((key, value) -> {
       if(defaultKey.equals(key)) {
         this.defaultValue = value;
         this.defaultId = this.id(value).orElseThrow(() -> new IllegalStateException("This shouldn't happen!"));
@@ -58,8 +60,8 @@ public class DefaultedIdRegistryImpl<K, V> extends IdRegistryImpl<K, V> implemen
   }
 
   @Override
-  public @NonNull V get(@NonNull final K key) {
-    final V value = this.registry.get(key);
+  public @NonNull V get(final @NonNull K key) {
+    final V value = super.get(key);
     return value != null ? value : this.defaultValue();
   }
 

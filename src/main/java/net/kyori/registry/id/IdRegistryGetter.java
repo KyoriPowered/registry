@@ -29,7 +29,12 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.OptionalInt;
 
-// TODO: javadocs
+/**
+ * A read-only operation view of an id registry.
+ *
+ * @param <K> the key type
+ * @param <V> the value type
+ */
 public interface IdRegistryGetter<K, V> extends RegistryGetter<K, V> {
   /**
    * Gets the value for {@code id}.
