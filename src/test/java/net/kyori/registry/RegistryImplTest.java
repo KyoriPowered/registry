@@ -35,9 +35,17 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class RegistryTest {
+class RegistryImplTest {
   @Test
-  void testGetPut() {
+  void testGetKey() {
+    final Registry<String, String> registry = Registry.create();
+    assertNull(registry.key("bbb"));
+    registry.register("aaa", "bbb");
+    assertEquals("aaa", registry.key("bbb"));
+  }
+
+  @Test
+  void testGetValue() {
     final Registry<String, String> registry = Registry.create();
     assertNull(registry.get("aaa"));
     registry.register("aaa", "bbb");

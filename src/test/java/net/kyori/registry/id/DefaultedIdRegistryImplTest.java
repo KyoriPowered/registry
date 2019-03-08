@@ -23,34 +23,37 @@
  */
 package net.kyori.registry.id;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.kyori.registry.id.map.IncrementalIdMap;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
-class BiIdRegistryImplTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+class DefaultedIdRegistryImplTest {
   private static final int DEFAULT = -1000;
-  private final BiIdRegistry<String, String> registry = BiIdRegistry.create(IncrementalIdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
-    {
-      this.defaultReturnValue(DEFAULT);
-    }
-  }, value -> value == DEFAULT));
+  private DefaultedIdRegistryImpl<String, String> registry = new DefaultedIdRegistryImpl<>(IncrementalIdMap.create(DEFAULT), "_default");
 
   @Test
   void testRegister() {
-    assertNull(this.registry.get("foo"));
+    assertEquals("The default value for key '_default' has not been registered yet!", assertThrows(IllegalStateException.class, () -> this.registry.get("_default")).getMessage());
+
     assertEquals(DEFAULT, this.registry.id("bar").orElse(DEFAULT));
-    this.registry.register(32, "foo", "bar");
-    assertEquals("bar", this.registry.get("foo"));
-    assertEquals("foo", this.registry.key("bar"));
+
+    this.registry.register(32, "_default", "bar");
+
+    assertEquals("bar", this.registry.get("_default"));
+    assertEquals("_default", this.registry.key("bar"));
     assertEquals(32, this.registry.id("bar").orElse(DEFAULT));
 
-    // check incremental
+    // default is now in, let's check
+    assertEquals(32, this.registry.idOrDefault(UUID.randomUUID().toString()));
+    assertEquals("bar", this.registry.byId(ThreadLocalRandom.current().nextInt()));
 
-    assertNull(this.registry.get("abc"));
+    // check incremental
+    assertEquals("bar", this.registry.get("abc"));
     this.registry.register("abc", "def");
     assertEquals("def", this.registry.get("abc"));
     assertEquals("abc", this.registry.key("def"));

@@ -23,34 +23,67 @@
  */
 package net.kyori.registry;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterators;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
+import java.util.function.BiConsumer;
+
+import static java.util.Objects.requireNonNull;
 
 /**
- * A simple implementation of a registry.
+ * An implementation of a {@link Registry} that forms a
+ * simple key-to-value map.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public class RegistryImpl<K, V> extends AbstractRegistry<K, V> implements Registry<K, V> {
-  private final Map<K, V> map = new HashMap<>();
+public class RegistryImpl<K, V> implements Registry<K, V> {
+  protected final BiMap<K, V> map = HashBiMap.create();
+  private @MonotonicNonNull List<BiConsumer<K, V>> registrationListeners;
+
+  protected RegistryImpl() {
+  }
+
+  @Override
+  public final @NonNull V register(final @NonNull K key, final @NonNull V value) {
+    requireNonNull(key, "key");
+    requireNonNull(value, "value");
+
+    this.map.put(key, value);
+
+    if(this.registrationListeners != null) {
+      this.registrationListeners.forEach(listener -> listener.accept(key, value));
+    }
+
+    return value;
+  }
+
+  @Override
+  public void addRegistrationListener(final @NonNull BiConsumer<K, V> listener) {
+    if(this.registrationListeners == null) {
+      this.registrationListeners = new ArrayList<>();
+    }
+    this.registrationListeners.add(listener);
+  }
 
   @Override
   public @Nullable V get(final @NonNull K key) {
+    requireNonNull(key, "key");
     return this.map.get(key);
   }
 
   @Override
-  protected @NonNull V register0(final @NonNull K key, final @NonNull V value) {
-    this.map.put(key, value);
-    return value;
+  public @Nullable K key(final @NonNull V value) {
+    return this.map.inverse().get(value);
   }
 
   @Override

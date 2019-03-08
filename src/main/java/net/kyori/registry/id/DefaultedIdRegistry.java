@@ -23,13 +23,26 @@
  */
 package net.kyori.registry.id;
 
-import net.kyori.registry.DefaultedRegistry;
+import net.kyori.registry.id.map.IncrementalIdMap;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * An id registry with a default key and value.
+ * A bidirectional id registry with a default id, key, and value.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public interface DefaultedIdRegistry<K, V> extends DefaultedIdRegistryGetter<K, V>, DefaultedRegistry<K, V>, IdRegistry<K, V> {
+public interface DefaultedIdRegistry<K, V> extends DefaultedIdRegistryGetter<K, V>, IdRegistry<K, V> {
+  /**
+   * Creates a bidirectional id registry.
+   *
+   * @param ids the id map
+   * @param defaultKey the default key
+   * @param <K> the key type
+   * @param <V> the value type
+   * @return a new bidirectional id registry
+   */
+  static <K, V> @NonNull DefaultedIdRegistry<K, V> create(final @NonNull IncrementalIdMap<V> ids, final @NonNull K defaultKey) {
+    return new DefaultedIdRegistryImpl<>(ids, defaultKey);
+  }
 }

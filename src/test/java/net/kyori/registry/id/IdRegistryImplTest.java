@@ -21,23 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.id;
 
+import net.kyori.registry.id.map.IncrementalIdMap;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class DefaultedBiRegistryTest {
+class IdRegistryImplTest {
+  private static final int DEFAULT = -1000;
+  private final IdRegistryImpl<String, String> registry = new IdRegistryImpl<>(IncrementalIdMap.create(DEFAULT));
+
   @Test
-  void testDefaultKeyValue() {
-    final DefaultedBiRegistry<String, String> registry = DefaultedBiRegistry.create("aaa");
-    assertEquals("aaa", registry.defaultKey());
-    assertNull(registry.get("aaa"));
-    assertNull(registry.get("ccc"));
-    registry.register("aaa", "bbb");
-    assertEquals("bbb", registry.get("aaa"));
-    assertNull(registry.get("ccc"));
-    assertEquals("bbb", registry.getOrDefault("ccc"));
+  void testRegister() {
+    assertNull(this.registry.get("foo"));
+    assertEquals(DEFAULT, this.registry.id("bar").orElse(DEFAULT));
+    this.registry.register(32, "foo", "bar");
+    assertEquals("bar", this.registry.get("foo"));
+    assertEquals("foo", this.registry.key("bar"));
+    assertEquals(32, this.registry.id("bar").orElse(DEFAULT));
+
+    // check incremental
+    assertNull(this.registry.get("abc"));
+    this.registry.register("abc", "def");
+    assertEquals("def", this.registry.get("abc"));
+    assertEquals("abc", this.registry.key("def"));
+    assertEquals(33, this.registry.id("def").orElse(DEFAULT));
+    assertEquals("def", this.registry.byId(33));
   }
 }

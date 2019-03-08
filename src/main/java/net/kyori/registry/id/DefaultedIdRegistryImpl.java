@@ -23,40 +23,64 @@
  */
 package net.kyori.registry.id;
 
-import net.kyori.registry.BiRegistryImpl;
-import net.kyori.registry.id.BiIdRegistry;
+import net.kyori.registry.DefaultedRegistry;
 import net.kyori.registry.id.map.IncrementalIdMap;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.OptionalInt;
 
-public class BiIdRegistryImpl<K, V> extends BiRegistryImpl<K, V> implements BiIdRegistry<K, V> {
-  private final IncrementalIdMap<V> ids;
+/**
+ * A simple implementation of a bidirectional id registry with a default id, key, and value.
+ *
+ * @param <K> the key type
+ * @param <V> the value type
+ */
+public class DefaultedIdRegistryImpl<K, V> extends IdRegistryImpl<K, V> implements DefaultedIdRegistry<K, V> {
+  private final K defaultKey;
+  private @MonotonicNonNull V defaultValue;
+  private int defaultId;
 
-  public BiIdRegistryImpl(final @NonNull IncrementalIdMap<V> ids) {
-    this.ids = ids;
+  protected DefaultedIdRegistryImpl(final @NonNull IncrementalIdMap<V> ids, final @NonNull K defaultKey) {
+    super(ids);
+    this.defaultKey = defaultKey;
+
+    this.addRegistrationListener((key, value) -> {
+      if(defaultKey.equals(key)) {
+        this.defaultValue = value;
+        this.defaultId = this.id(value).orElseThrow(() -> new IllegalStateException("This shouldn't happen!"));
+      }
+    });
   }
 
   @Override
-  protected @NonNull V register0(final @NonNull K key, final @NonNull V value) {
-    return this.register(this.ids.next(), key, value);
+  public @NonNull K defaultKey() {
+    return this.defaultKey;
   }
 
   @Override
-  public @NonNull V register(final int id, final @NonNull K key, final @NonNull V value) {
-    super.register0(key, value);
-    this.ids.put(id, value);
-    return value;
+  public @NonNull V get(final @NonNull K key) {
+    final V value = super.get(key);
+    return value != null ? value : this.defaultValue();
   }
 
   @Override
-  public @NonNull OptionalInt id(final @NonNull V value) {
-    return this.ids.id(value);
+  public int idOrDefault(final @NonNull V value) {
+    final OptionalInt id = this.id(value);
+    return id.isPresent() ? id.getAsInt() : this.defaultId;
   }
 
   @Override
   public @Nullable V byId(final int id) {
-    return this.ids.get(id);
+    final V value = super.byId(id);
+    if(value != null) {
+      return value;
+    }
+    return this.defaultValue();
+  }
+
+  private @NonNull V defaultValue() {
+    return DefaultedRegistry.defaultValue(this.defaultKey, this.defaultValue);
   }
 }

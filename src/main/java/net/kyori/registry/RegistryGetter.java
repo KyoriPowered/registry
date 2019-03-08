@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * A read-only view of a registry.
+ * A read-only operation view of a registry.
  *
  * @param <K> the key type
  * @param <V> the value type
@@ -46,6 +46,14 @@ public interface RegistryGetter<K, V> extends Iterable<V> {
    * @return the value
    */
   @Nullable V get(final @NonNull K key);
+
+  /**
+   * Gets the key for {@code value}.
+   *
+   * @param value the value
+   * @return the key
+   */
+  @Nullable K key(final @NonNull V value);
 
   /**
    * Gets a set of the keys contained in this registry.

@@ -21,13 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.id;
+package net.kyori.registry;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.Iterator;
+import java.util.Set;
 
 /**
- * A read-only view of a bidirectional id registry with a default key and value.
+ * A registry getter which forwards all its method calls to another registry getter.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public interface DefaultedBiIdRegistryGetter<K, V> extends BiIdRegistryGetter<K, V>, DefaultedIdRegistryGetter<K, V> {
+public interface ForwardingRegistryGetter<K, V> extends RegistryGetter<K, V> {
+  /**
+   * Gets the forwarded registry.
+   *
+   * @return the forwarded registry
+   */
+  @NonNull RegistryGetter<K, V> registry();
+
+  @Override
+  default @Nullable V get(final @NonNull K key) {
+    return this.registry().get(key);
+  }
+
+  @Override
+  default @Nullable K key(final @NonNull V value) {
+    return this.registry().key(value);
+  }
+
+  @Override
+  default @NonNull Set<K> keySet() {
+    return this.registry().keySet();
+  }
+
+  @Override
+  default @NonNull Iterator<V> iterator() {
+    return this.registry().iterator();
+  }
 }

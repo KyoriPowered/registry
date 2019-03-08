@@ -47,14 +47,14 @@ public class IncrementalIdMapImpl<V> extends IdMapImpl<V> implements Incremental
   }
 
   @Override
-  public int put(@NonNull final V value) {
+  public int put(final @NonNull V value) {
     final int id = this.nextId;
     this.put(id, value);
     return id;
   }
 
   @Override
-  protected void put0(final int id, @NonNull final V value) {
+  protected void put0(final int id, final @NonNull V value) {
     super.put0(id, value);
     if(this.nextId <= id) {
       this.nextId = id + 1;

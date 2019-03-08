@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class IdMapImplTest {
   private static final int DEFAULT = -1000;
+  @SuppressWarnings("serial")
   private final IdMap<String> map = IdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
     {
       this.defaultReturnValue(DEFAULT);

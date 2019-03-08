@@ -24,6 +24,7 @@
 package net.kyori.registry;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A registry with a default key and value.
@@ -33,7 +34,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public interface DefaultedRegistry<K, V> extends DefaultedRegistryGetter<K, V>, Registry<K, V> {
   /**
-   * Creates a new bidirectional registry with a default key.
+   * Creates a new registry with a default key.
    *
    * @param defaultKey the default key
    * @param <K> the key type
@@ -42,5 +43,12 @@ public interface DefaultedRegistry<K, V> extends DefaultedRegistryGetter<K, V>, 
    */
   static <K, V> @NonNull DefaultedRegistry<K, V> create(final @NonNull K defaultKey) {
     return new DefaultedRegistryImpl<>(defaultKey);
+  }
+
+  static <K, V> @NonNull V defaultValue(final @NonNull K defaultKey, final @Nullable V defaultValue) {
+    if(defaultValue == null) {
+      throw new IllegalStateException("The default value for key '" + defaultKey + "' has not been registered yet!");
+    }
+    return defaultValue;
   }
 }

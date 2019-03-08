@@ -23,11 +23,25 @@
  */
 package net.kyori.registry;
 
-/**
- * A read-only view of a bidirectional registry with a default key and value.
- *
- * @param <K> the key type
- * @param <V> the value type
- */
-public interface DefaultedBiRegistryGetter<K, V> extends BiRegistryGetter<K, V>, DefaultedRegistryGetter<K, V> {
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+class DefaultedRegistryImplTest {
+  @Test
+  void testDefaultKeyValue() {
+    final DefaultedRegistryImpl<String, String> registry = new DefaultedRegistryImpl<>("_default");
+    assertEquals("_default", registry.defaultKey());
+
+    assertEquals("The default value for key '_default' has not been registered yet!", assertThrows(IllegalStateException.class, () -> registry.get("aaa")).getMessage());
+    assertEquals("The default value for key '_default' has not been registered yet!", assertThrows(IllegalStateException.class, () -> registry.get("ccc")).getMessage());
+
+    registry.register("_default", "bbb");
+    assertEquals("bbb", registry.get("aaa"));
+
+    assertNotNull(registry.get("ccc"));
+    assertEquals("bbb", registry.get("ccc"));
+  }
 }

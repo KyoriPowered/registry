@@ -25,8 +25,10 @@ package net.kyori.registry;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.function.BiConsumer;
+
 /**
- * A registry.
+ * A bidirectional registry.
  *
  * @param <K> the key type
  * @param <V> the value type
@@ -39,16 +41,24 @@ public interface Registry<K, V> extends RegistryGetter<K, V> {
    * @param <V> the value type
    * @return a new registry
    */
-  static <K, V> @NonNull Registry<K, V> create() {
+  static <K, V> @NonNull RegistryImpl<K, V> create() {
     return new RegistryImpl<>();
   }
 
   /**
    * Associates {@code key} to {@code value}.
    *
-   * @param key the key
+   * @param key   the key
    * @param value the value
    * @return the value
    */
   @NonNull V register(final @NonNull K key, final @NonNull V value);
+
+  /**
+   * Adds a callback function that will be executed after any call to
+   * {@link Registry#register(Object, Object)}
+   *
+   * @param listener the callback function
+   */
+  void addRegistrationListener(final @NonNull BiConsumer<K, V> listener);
 }

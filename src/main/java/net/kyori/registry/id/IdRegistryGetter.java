@@ -30,20 +30,12 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.util.OptionalInt;
 
 /**
- * A read-only view of an id registry.
+ * A read-only operation view of an id registry.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
 public interface IdRegistryGetter<K, V> extends RegistryGetter<K, V> {
-  /**
-   * Gets the id for {@code value}.
-   *
-   * @param value the value
-   * @return the id
-   */
-  @NonNull OptionalInt id(final @NonNull V value);
-
   /**
    * Gets the value for {@code id}.
    *
@@ -51,4 +43,12 @@ public interface IdRegistryGetter<K, V> extends RegistryGetter<K, V> {
    * @return the value
    */
   @Nullable V byId(final int id);
+
+  /**
+   * Gets the id for {@code value}.
+   *
+   * @param value the value
+   * @return the id
+   */
+  @NonNull OptionalInt id(final @NonNull V value);
 }

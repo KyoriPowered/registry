@@ -27,17 +27,24 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * A simple implementation of a registry with a default key and value.
+ * A {@link DefaultedRegistryImpl} is an extension of a {@link RegistryImpl}. This type of registry provides
+ * a default value, as registered, for missing keys.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
 public class DefaultedRegistryImpl<K, V> extends RegistryImpl<K, V> implements DefaultedRegistry<K, V> {
-  protected final K defaultKey;
-  protected @MonotonicNonNull V defaultValue;
+  private final K defaultKey;
+  private @MonotonicNonNull V defaultValue;
 
-  public DefaultedRegistryImpl(final @NonNull K defaultKey) {
+  protected DefaultedRegistryImpl(final @NonNull K defaultKey) {
     this.defaultKey = defaultKey;
+
+    this.addRegistrationListener((key, value) -> {
+      if(defaultKey.equals(key)) {
+        this.defaultValue = value;
+      }
+    });
   }
 
   @Override
@@ -46,15 +53,11 @@ public class DefaultedRegistryImpl<K, V> extends RegistryImpl<K, V> implements D
   }
 
   @Override
-  public @NonNull V getOrDefault(final @NonNull K key) {
-    final /* @Nullable */ V value = this.get(key);
-    return value != null ? value : this.defaultValue;
-  }
-
-  @Override
-  protected void registered(final @NonNull K key, final @NonNull V value) {
-    if(this.defaultKey.equals(key)) {
-      this.defaultValue = value;
+  public @NonNull V get(final @NonNull K key) {
+    final V value = super.get(key);
+    if(value != null) {
+      return value;
     }
+    return DefaultedRegistry.defaultValue(this.defaultKey, this.defaultValue);
   }
 }

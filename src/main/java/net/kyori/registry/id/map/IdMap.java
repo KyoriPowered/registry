@@ -41,7 +41,7 @@ public interface IdMap<V> extends IdMapGetter<V> {
    * @param idToV the id to value map
    * @param vToId the value to id map
    * @param empty emptiness checker
-   * @param <V> the value type
+   * @param <V>   the value type
    * @return an id map
    */
   static <V> @NonNull IdMap<V> create(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
@@ -51,7 +51,7 @@ public interface IdMap<V> extends IdMapGetter<V> {
   /**
    * Associates {@code value} with {@code id}.
    *
-   * @param id the id
+   * @param id    the id
    * @param value the value
    * @return the value
    */

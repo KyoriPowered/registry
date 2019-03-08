@@ -25,26 +25,25 @@ package net.kyori.registry;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import static java.util.Objects.requireNonNull;
+import java.util.function.BiConsumer;
 
 /**
- * An abstract implementation of a registry.
+ * A registry which forwards all its method calls to another registry.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public abstract class AbstractRegistry<K, V> implements Registry<K, V> {
+public interface ForwardingRegistry<K, V> extends ForwardingRegistryGetter<K, V>, Registry<K, V> {
   @Override
-  public final @NonNull V register(final @NonNull K key, @NonNull V value) {
-    requireNonNull(key, "key");
-    requireNonNull(value, "value");
-    value = this.register0(key, value);
-    this.registered(key, value);
-    return value;
+  @NonNull Registry<K, V> registry();
+
+  @Override
+  default @NonNull V register(final @NonNull K key, final @NonNull V value) {
+    return this.registry().register(key, value);
   }
 
-  protected abstract @NonNull V register0(final @NonNull K key, final @NonNull V value);
-
-  protected void registered(final @NonNull K key, final @NonNull V value) {
+  @Override
+  default void addRegistrationListener(final @NonNull BiConsumer<K, V> listener) {
+    this.registry().addRegistrationListener(listener);
   }
 }
