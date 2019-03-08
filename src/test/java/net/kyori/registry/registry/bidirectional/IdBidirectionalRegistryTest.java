@@ -21,31 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.id.map;
+package net.kyori.registry.registry.bidirectional;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.kyori.registry.impl.registry.IdRegistryImpl;
+import net.kyori.registry.api.registry.Registry;
 import net.kyori.registry.api.map.IncrementalIdMap;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-class IncrementalIdMapImplTest {
+class IdBidirectionalRegistryTest {
     private static final int DEFAULT = -1000;
-    private final IncrementalIdMap<String> map = IncrementalIdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
-        {
-            this.defaultReturnValue(DEFAULT);
-        }
-    }, value -> value == -1000);
+
+    private final IdRegistryImpl<String, String> registry = new IdRegistryImpl<>(
+            Registry.create(),
+            IncrementalIdMap.create(DEFAULT)
+    );
 
     @Test
-    void testPut() {
-        final int i0 = this.map.put("abc");
-        assertEquals(0, i0);
-        assertEquals("abc", this.map.get(i0));
-        final int i1 = this.map.put("def");
-        assertEquals(1, i1);
-        assertEquals("def", this.map.get(i1));
-        assertEquals("abc", this.map.get(i0));
+    void testRegister() {
+        assertNull(registry.get("foo"));
+        assertEquals(DEFAULT, registry.id("bar").orElse(DEFAULT));
+        registry.register(32, "foo", "bar");
+        assertEquals("bar", registry.get("foo"));
+        assertEquals("foo", registry.key("bar"));
+        assertEquals(32, registry.id("bar").orElse(DEFAULT));
+
+        // check incremental
+        assertNull(registry.get("abc"));
+        registry.register("abc", "def");
+        assertEquals("def", registry.get("abc"));
+        assertEquals("abc", registry.key("def"));
+        assertEquals(33, registry.id("def").orElse(DEFAULT));
+        assertEquals("def", registry.byId(33));
     }
 }

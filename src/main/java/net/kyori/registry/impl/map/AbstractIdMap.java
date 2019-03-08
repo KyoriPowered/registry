@@ -21,26 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.impl.map;
 
-import net.kyori.registry.api.Registry;
-import org.junit.jupiter.api.Test;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.kyori.registry.api.map.IdMap;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import static org.junit.jupiter.api.Assertions.*;
+/**
+ * An abstract implementation of an id map.
+ *
+ * @param <V> the value type
+ */
+public abstract class AbstractIdMap<V> implements IdMap<V> {
+    protected final Int2ObjectMap<V> idToV;
+    protected final Object2IntMap<V> vToId;
 
-class DefaultValueRegistryTest {
-    @Test
-    void testDefaultKeyValue() {
-        final DefaultValueRegistry<String, String> container = new DefaultValueRegistry<>(Registry.create(), "_default");
-        assertEquals("_default", container.defaultKey());
+    protected AbstractIdMap(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId) {
+        this.idToV = idToV;
+        this.vToId = vToId;
+    }
 
-        assertNull(container.get("aaa"));
-        assertNull(container.get("ccc"));
+    @Override
+    public final @NonNull V put(final int id, final @NonNull V value) {
+        this.put0(id, value);
+        return value;
+    }
 
-        container.register("_default", "bbb");
-        assertEquals("bbb", container.get("aaa"));
-        assertNotNull(container.get("ccc"));
+    protected void put0(final int id, final @NonNull V value) {
+        this.idToV.put(id, value);
+        this.vToId.put(value, id);
+    }
 
-        assertEquals("bbb", container.getOrDefault("ccc"));
+    @Override
+    public @Nullable V get(final int id) {
+        return this.idToV.get(id);
     }
 }

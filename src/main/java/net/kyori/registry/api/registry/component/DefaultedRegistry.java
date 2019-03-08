@@ -21,34 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.api.map;
+package net.kyori.registry.api.registry.component;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.kyori.registry.api.registry.RegistryView;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.OptionalInt;
-import java.util.function.IntPredicate;
+public interface DefaultedRegistry<K, V> extends RegistryView<K, V> {
+    @NonNull K defaultKey();
 
-/**
- * A simple implementation of an id map.
- *
- * @param <V> the value type
- */
-public class IdMapImpl<V> extends AbstractIdMap<V> {
-    private final IntPredicate empty;
-
-    public IdMapImpl(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
-        super(idToV, vToId);
-        this.empty = empty;
-    }
-
-    @Override
-    public @NonNull OptionalInt id(final @NonNull V value) {
-        final int id = this.vToId.getInt(value);
-        if (!this.empty.test(id)) {
-            return OptionalInt.of(id);
-        }
-        return OptionalInt.empty();
-    }
+    @NonNull V getOrDefault(@NonNull K key);
 }

@@ -21,81 +21,74 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.impl.registry;
 
-import net.kyori.registry.api.Registry;
-import net.kyori.registry.api.map.IncrementalIdMap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Iterators;
+import net.kyori.registry.api.registry.Registry;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.Iterator;
-import java.util.OptionalInt;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 
-public class IdRegistryImpl<K, V> implements Registry<K, V> {
-    private final Registry<K, V> registry;
-    protected final IncrementalIdMap<V> ids;
+import static java.util.Objects.requireNonNull;
 
-    public IdRegistryImpl(final @NonNull Registry<K, V> registry, final @NonNull IncrementalIdMap<V> ids) {
-        this.registry = registry;
-        this.ids = ids;
+/**
+ * An implementation of a {@link Registry} that forms a
+ * simple key-to-value map.
+ *
+ * @param <K> the key type
+ * @param <V> the value type
+ */
+public class RegistryImpl<K, V> implements Registry<K, V> {
+    protected final BiMap<K, V> map;
+    private final List<BiConsumer<K, V>> registrationListeners = new ArrayList<>();
+
+    public RegistryImpl() {
+        this(HashBiMap.create());
     }
 
-    public @NonNull V register(final @NonNull K key, @NonNull V value) {
-        return this.register(ids.next(), key, value);
+    public RegistryImpl(BiMap<K, V> map) {
+        this.map = map;
     }
 
-    public @NonNull V register(final int id, final @NonNull K key, @NonNull V value) {
-        ids.put(id, value);
-        registry.register(key, value);
+    @Override
+    public final @NonNull V register(final @NonNull K key, @NonNull V value) {
+        requireNonNull(key, "key");
+        requireNonNull(value, "value");
+
+        map.put(key, value);
+        registrationListeners.forEach(listener -> listener.accept(key, value));
+
         return value;
     }
 
     @Override
     public void addRegistrationListener(@NonNull BiConsumer<K, V> listener) {
-        registry.addRegistrationListener(listener);
+        registrationListeners.add(listener);
     }
 
-    @Nullable
     @Override
-    public V get(@NonNull K key) {
-        return registry.get(key);
+    public @Nullable V get(final @NonNull K key) {
+        requireNonNull(key, "key");
+        return map.get(key);
     }
 
     @Override
     public @NonNull Set<K> keySet() {
-        return registry.keySet();
+        return Collections.unmodifiableSet(map.keySet());
     }
 
     @Nullable
     @Override
     public K key(@NonNull V value) {
-        return registry.key(value);
+        return map.inverse().get(value);
     }
 
     @Override
     public @NonNull Iterator<V> iterator() {
-        return registry.iterator();
-    }
-
-    /**
-     * Gets the id for {@code value}.
-     *
-     * @param value the value
-     * @return the id
-     */
-    public @NonNull OptionalInt id(final @NonNull V value) {
-        return this.ids.id(value);
-    }
-
-    /**
-     * Gets the value for {@code id}.
-     *
-     * @param id the id
-     * @return the value
-     */
-    public @Nullable V byId(final int id) {
-        return this.ids.get(id);
+        return Iterators.unmodifiableIterator(map.values().iterator());
     }
 }

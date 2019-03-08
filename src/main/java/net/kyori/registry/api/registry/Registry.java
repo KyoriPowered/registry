@@ -21,26 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.api.registry;
 
-import net.kyori.registry.api.Registry;
-import org.junit.jupiter.api.Test;
+import com.google.common.collect.BiMap;
+import net.kyori.registry.impl.registry.RegistryImpl;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.function.BiConsumer;
 
-class DefaultValueBiRegistryTest {
-    @Test
-    void testDefaultKeyValue() {
-        final DefaultValueRegistry<String, String> container = new DefaultValueRegistry<>(Registry.create(), "_default");
-        assertEquals("_default", container.defaultKey());
-
-        assertNull(container.get("aaa"));
-        assertNull(container.get("ccc"));
-
-        container.register("_default", "bbb");
-        assertEquals("bbb", container.get("aaa"));
-
-        assertNotNull(container.get("ccc"));
-        assertEquals("bbb", container.getOrDefault("ccc"));
+public interface Registry<K, V> extends RegistryView<K, V> {
+    static <K, V> RegistryImpl<K, V> create() {
+        return new RegistryImpl<>();
     }
+
+    static <K, V> RegistryImpl<K, V> createFromMap(BiMap<K, V> map) {
+        return new RegistryImpl<>(map);
+    }
+
+    /**
+     * Associates {@code key} to {@code value}.
+     *
+     * @param key   the key
+     * @param value the value
+     * @return the value
+     */
+    @NonNull V register(final @NonNull K key, final @NonNull V value);
+
+    /**
+     * Adds a callback function that will be executed after any call to
+     * {@link Registry#register(Object, Object)}
+     *
+     * @param listener the callback function
+     */
+    void addRegistrationListener(final @NonNull BiConsumer<K, V> listener);
 }

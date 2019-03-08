@@ -21,12 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.api;
+package net.kyori.registry.registry.unidirectional;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import net.kyori.registry.api.registry.Registry;
+import net.kyori.registry.impl.registry.DefaultValueRegistry;
+import org.junit.jupiter.api.Test;
 
-public interface DefaultedRegistry<K, V> extends RegistryView<K, V> {
-    @NonNull K defaultKey();
+import static org.junit.jupiter.api.Assertions.*;
 
-    @NonNull V getOrDefault(@NonNull K key);
+class DefaultValueUnidirectionalRegistryTest {
+    @Test
+    void testDefaultKeyValue() {
+        final DefaultValueRegistry<String, String> container = new DefaultValueRegistry<>(Registry.create(), "_default");
+        assertEquals("_default", container.defaultKey());
+
+        assertNull(container.get("aaa"));
+        assertNull(container.get("ccc"));
+
+        container.register("_default", "bbb");
+        assertEquals("bbb", container.get("aaa"));
+        assertNotNull(container.get("ccc"));
+
+        assertEquals("bbb", container.getOrDefault("ccc"));
+    }
 }

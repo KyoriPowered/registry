@@ -21,45 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.impl.registry;
 
-import net.kyori.registry.api.Registry;
-import net.kyori.registry.api.DefaultedRegistry;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import net.kyori.registry.api.registry.Registry;
+import net.kyori.registry.api.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Iterator;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-/**
- * A {@link DefaultValueRegistry} is an extension of a {@link RegistryImpl}. This type of registry provides
- * a default values, as registered, for missing keys.
- *
- * @param <K> the key type
- * @param <V> the value type
- */
-public class DefaultValueRegistry<K, V> implements Registry<K, V>, DefaultedRegistry<K, V> {
+public class IdRegistryImpl<K, V> implements Registry<K, V> {
     private final Registry<K, V> registry;
-    private final K defaultKey;
-    @MonotonicNonNull
-    private V defaultValue;
+    protected final IncrementalIdMap<V> ids;
 
-    public DefaultValueRegistry(Registry<K, V> registry, final @NonNull K defaultKey) {
-        registry.addRegistrationListener((key, value) -> {
-            if (defaultKey.equals(key)) {
-                this.defaultValue = value;
-            }
-        });
-
+    public IdRegistryImpl(final @NonNull Registry<K, V> registry, final @NonNull IncrementalIdMap<V> ids) {
         this.registry = registry;
-        this.defaultKey = defaultKey;
+        this.ids = ids;
     }
 
-    @Override
-    public @NonNull V register(@NonNull K key, @NonNull V value) {
-        return registry.register(key, value);
+    public @NonNull V register(final @NonNull K key, @NonNull V value) {
+        return this.register(ids.next(), key, value);
+    }
+
+    public @NonNull V register(final int id, final @NonNull K key, @NonNull V value) {
+        ids.put(id, value);
+        registry.register(key, value);
+        return value;
     }
 
     @Override
@@ -70,7 +60,7 @@ public class DefaultValueRegistry<K, V> implements Registry<K, V>, DefaultedRegi
     @Nullable
     @Override
     public V get(@NonNull K key) {
-        return getOrDefault(key);
+        return registry.get(key);
     }
 
     @Override
@@ -78,8 +68,9 @@ public class DefaultValueRegistry<K, V> implements Registry<K, V>, DefaultedRegi
         return registry.keySet();
     }
 
+    @Nullable
     @Override
-    public @Nullable K key(@NonNull V value) {
+    public K key(@NonNull V value) {
         return registry.key(value);
     }
 
@@ -88,14 +79,23 @@ public class DefaultValueRegistry<K, V> implements Registry<K, V>, DefaultedRegi
         return registry.iterator();
     }
 
-    @Override
-    public @NonNull K defaultKey() {
-        return this.defaultKey;
+    /**
+     * Gets the id for {@code value}.
+     *
+     * @param value the value
+     * @return the id
+     */
+    public @NonNull OptionalInt id(final @NonNull V value) {
+        return this.ids.id(value);
     }
 
-    @Override
-    public @NonNull V getOrDefault(final @NonNull K key) {
-        final V value = registry.get(key);
-        return value != null ? value : this.defaultValue;
+    /**
+     * Gets the value for {@code id}.
+     *
+     * @param id the id
+     * @return the value
+     */
+    public @Nullable V byId(final int id) {
+        return this.ids.get(id);
     }
 }

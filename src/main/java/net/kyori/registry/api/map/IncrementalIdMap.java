@@ -24,7 +24,10 @@
 package net.kyori.registry.api.map;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.kyori.registry.impl.map.IncrementalIdMapImpl;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.function.IntPredicate;
@@ -47,6 +50,42 @@ public interface IncrementalIdMap<V> extends IdMap<V> {
     static <V> @NonNull IncrementalIdMap<V> create(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
         return new IncrementalIdMapImpl<>(idToV, vToId, empty);
     }
+
+    /**
+     * Creates a default incremental id map using a {@link Int2ObjectOpenHashMap} for the {@code idToV},
+     * a {@link Object2IntOpenHashMap} for the {@code vToId} and the provided {@link IntPredicate}.
+     *
+     * @param defaultReturnValue the default int value to return for this {@link IncrementalIdMap}
+     * @param emptyChecker emptiness checker
+     * @param <V> the value type
+     * @return an incremental id map
+     */
+    static <V> @NonNull IncrementalIdMap<V> create(final int defaultReturnValue, IntPredicate emptyChecker) {
+        return create(
+                new Int2ObjectOpenHashMap<>(),
+                new Object2IntOpenHashMap<V>() {{
+                    this.defaultReturnValue(defaultReturnValue);
+                }},
+                emptyChecker
+        );
+    }
+
+    /**
+     * Creates a default incremental id map using a {@link Int2ObjectOpenHashMap} for the {@code idToV},
+     * a {@link Object2IntOpenHashMap} for the {@code vToId} and the provided {@link IntPredicate}.
+     *
+     * @param defaultReturnValue the default int value to return for this {@link IncrementalIdMap}
+     * @param <V> the value type
+     * @return an incremental id map
+     */
+    static <V> @NonNull IncrementalIdMap<V> create(final int defaultReturnValue) {
+        return create(
+                defaultReturnValue,
+                value -> value == defaultReturnValue
+        );
+    }
+
+
 
     /**
      * Gets the next id.

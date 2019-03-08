@@ -21,53 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.api;
+package net.kyori.registry.api.registry.component;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.Iterator;
-import java.util.Set;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
-public interface RegistryView<K, V> extends Iterable<V> {
+/**
+ * A read-only component of an id registry with a default key and value.
+ *
+ * @param <V> the value type
+ */
+public interface DefaultedRegistryIdentifier<V> {
     /**
-     * Gets the value for {@code key}.
-     *
-     * @param key the key
-     * @return the value
-     */
-    @Nullable V get(final @NonNull K key);
-
-    /**
-     * Gets a set of the keys contained in this registry.
-     *
-     * @return a set of the keys contained in this registry
-     */
-    @NonNull Set<K> keySet();
-
-    /**
-     * Gets the key for {@code value}.
+     * Gets the id for {@code value}.
      *
      * @param value the value
-     * @return the key
+     * @return the id
      */
-    @Nullable K key(final @NonNull V value);
-
-    /**
-     * Creates an unmodifiable iterator of values.
-     *
-     * @return an unmodifiable iterator
-     */
-    @NonNull Iterator<V> iterator();
-
-    /**
-     * Creates a stream of values.
-     *
-     * @return a stream
-     */
-    default @NonNull Stream<V> stream() {
-        return StreamSupport.stream(this.spliterator(), false);
-    }
+    int idOrDefault(final @NonNull V value);
 }

@@ -21,37 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.api;
+package net.kyori.registry.impl.map;
 
-import com.google.common.collect.BiMap;
-import net.kyori.registry.RegistryImpl;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.kyori.registry.api.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.function.BiConsumer;
+import java.util.function.IntPredicate;
 
-public interface Registry<K, V> extends RegistryView<K, V> {
-    static <K, V> RegistryImpl<K, V> create() {
-        return new RegistryImpl<>();
+/**
+ * A simple implementation of an incremental id map.
+ *
+ * @param <V> the value type
+ */
+public class IncrementalIdMapImpl<V> extends IdMapImpl<V> implements IncrementalIdMap<V> {
+    private int nextId;
+
+    public IncrementalIdMapImpl(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
+        super(idToV, vToId, empty);
     }
 
-    static <K, V> RegistryImpl<K, V> createFromMap(BiMap<K, V> map) {
-        return new RegistryImpl<>(map);
+    @Override
+    public int next() {
+        return this.nextId;
     }
 
-    /**
-     * Associates {@code key} to {@code value}.
-     *
-     * @param key   the key
-     * @param value the value
-     * @return the value
-     */
-    @NonNull V register(final @NonNull K key, final @NonNull V value);
+    @Override
+    public int put(@NonNull final V value) {
+        final int id = this.nextId;
+        this.put(id, value);
+        return id;
+    }
 
-    /**
-     * Adds a callback function that will be executed after any call to
-     * {@link Registry#register(Object, Object)}
-     *
-     * @param listener the callback function
-     */
-    void addRegistrationListener(final @NonNull BiConsumer<K, V> listener);
+    @Override
+    protected void put0(final int id, @NonNull final V value) {
+        super.put0(id, value);
+        if (this.nextId <= id) {
+            this.nextId = id + 1;
+        }
+    }
 }

@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.impl.registry;
 
-import net.kyori.registry.api.Registry;
-import net.kyori.registry.api.DefaultedRegistryIdentifier;
-import net.kyori.registry.api.DefaultedRegistry;
+import net.kyori.registry.api.registry.Registry;
+import net.kyori.registry.api.registry.component.DefaultedRegistryIdentifier;
+import net.kyori.registry.api.registry.component.DefaultedRegistry;
 import net.kyori.registry.api.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;

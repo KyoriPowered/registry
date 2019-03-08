@@ -21,40 +21,53 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.api.map;
+package net.kyori.registry.api.registry;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.kyori.registry.impl.map.IdMapImpl;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.function.IntPredicate;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-/**
- * An id map.
- *
- * @param <V> the value type
- */
-public interface IdMap<V> extends IdMapGetter<V> {
+public interface RegistryView<K, V> extends Iterable<V> {
     /**
-     * Creates an id map.
+     * Gets the value for {@code key}.
      *
-     * @param idToV the id to value map
-     * @param vToId the value to id map
-     * @param empty emptiness checker
-     * @param <V>   the value type
-     * @return an id map
-     */
-    static <V> @NonNull IdMap<V> create(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
-        return new IdMapImpl<>(idToV, vToId, empty);
-    }
-
-    /**
-     * Associates {@code value} with {@code id}.
-     *
-     * @param id    the id
-     * @param value the value
+     * @param key the key
      * @return the value
      */
-    @NonNull V put(final int id, final @NonNull V value);
+    @Nullable V get(final @NonNull K key);
+
+    /**
+     * Gets a set of the keys contained in this registry.
+     *
+     * @return a set of the keys contained in this registry
+     */
+    @NonNull Set<K> keySet();
+
+    /**
+     * Gets the key for {@code value}.
+     *
+     * @param value the value
+     * @return the key
+     */
+    @Nullable K key(final @NonNull V value);
+
+    /**
+     * Creates an unmodifiable iterator of values.
+     *
+     * @return an unmodifiable iterator
+     */
+    @NonNull Iterator<V> iterator();
+
+    /**
+     * Creates a stream of values.
+     *
+     * @return a stream
+     */
+    default @NonNull Stream<V> stream() {
+        return StreamSupport.stream(this.spliterator(), false);
+    }
 }

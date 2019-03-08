@@ -21,35 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.id;
+package net.kyori.registry.registry.bidirectional;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.kyori.registry.IdRegistryImpl;
-import net.kyori.registry.api.Registry;
+import net.kyori.registry.impl.registry.DefaultValueIdRegistry;
+import net.kyori.registry.api.registry.Registry;
 import net.kyori.registry.api.map.IncrementalIdMap;
 import org.junit.jupiter.api.Test;
+
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class IdBiRegistryTest {
+class DefaultValueIdBidirectionalRegistryTest {
     private static final int DEFAULT = -1000;
 
-    private final IdRegistryImpl<String, String> registry = new IdRegistryImpl<>(Registry.create(), IncrementalIdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
-        {
-            this.defaultReturnValue(DEFAULT);
-        }
-    }, value -> value == DEFAULT));
+    private DefaultValueIdRegistry<String, String> registry = new DefaultValueIdRegistry<>(
+            Registry.create(),
+            "_default",
+            IncrementalIdMap.create(DEFAULT)
+    );
 
     @Test
     void testRegister() {
-        assertNull(registry.get("foo"));
+        assertNull(registry.get("_default"));
+
         assertEquals(DEFAULT, registry.id("bar").orElse(DEFAULT));
-        registry.register(32, "foo", "bar");
-        assertEquals("bar", registry.get("foo"));
-        assertEquals("foo", registry.key("bar"));
+
+        registry.register(32, "_default", "bar");
+
+        assertEquals("bar", registry.get("_default"));
+        assertEquals("_default", registry.key("bar"));
         assertEquals(32, registry.id("bar").orElse(DEFAULT));
+
+        // default is now in, let's check
+        assertEquals(32, registry.idOrDefault(UUID.randomUUID().toString()));
+        assertEquals("bar", registry.byId(ThreadLocalRandom.current().nextInt()));
 
         // check incremental
         assertNull(registry.get("abc"));

@@ -21,10 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry;
+package net.kyori.registry.registry.unidirectional;
 
 import com.google.common.collect.ImmutableList;
-import net.kyori.registry.api.Registry;
+import net.kyori.registry.api.registry.Registry;
 import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
@@ -33,7 +33,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth8.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-class RegistryTest {
+class UnidirectionalRegistryTest {
     @Test
     void testGetPut() {
         final Registry<String, String> registry = Registry.create();
