@@ -21,39 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.registry.bidirectional;
+package net.kyori.registry;
 
-import net.kyori.registry.impl.registry.IdRegistryImpl;
-import net.kyori.registry.api.registry.Registry;
-import net.kyori.registry.api.map.IncrementalIdMap;
+import net.kyori.registry.impl.registry.DefaultedRegistryImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class IdBidirectionalRegistryTest {
-    private static final int DEFAULT = -1000;
+class DefaultedRegistryImplTest {
+  @Test
+  void testDefaultKeyValue() {
+    final DefaultedRegistryImpl<String, String> container = new DefaultedRegistryImpl<>(Registry.create(), "_default");
+    assertEquals("_default", container.defaultKey());
 
-    private final IdRegistryImpl<String, String> registry = new IdRegistryImpl<>(
-            Registry.create(),
-            IncrementalIdMap.create(DEFAULT)
-    );
+    assertNull(container.get("aaa"));
+    assertNull(container.get("ccc"));
 
-    @Test
-    void testRegister() {
-        assertNull(registry.get("foo"));
-        assertEquals(DEFAULT, registry.id("bar").orElse(DEFAULT));
-        registry.register(32, "foo", "bar");
-        assertEquals("bar", registry.get("foo"));
-        assertEquals("foo", registry.key("bar"));
-        assertEquals(32, registry.id("bar").orElse(DEFAULT));
+    container.register("_default", "bbb");
+    assertEquals("bbb", container.get("aaa"));
 
-        // check incremental
-        assertNull(registry.get("abc"));
-        registry.register("abc", "def");
-        assertEquals("def", registry.get("abc"));
-        assertEquals("abc", registry.key("def"));
-        assertEquals(33, registry.id("def").orElse(DEFAULT));
-        assertEquals("def", registry.byId(33));
-    }
+    assertNotNull(container.get("ccc"));
+    assertEquals("bbb", container.getOrDefault("ccc"));
+  }
 }

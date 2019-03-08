@@ -21,34 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.api.registry;
+package net.kyori.registry.map;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.OptionalInt;
 
-public interface ForwardingRegistryGetter<K, V> extends RegistryGetter<K, V> {
-  @NonNull RegistryGetter<K, V> registry();
+/**
+ * A readable id map.
+ *
+ * @param <V> the value type
+ */
+public interface IdMapGetter<V> {
+  /**
+   * Gets a value by its id.
+   *
+   * @param id the id
+   * @return the value
+   */
+  @Nullable V get(final int id);
 
-  @Override
-  default @Nullable V get(final @NonNull K key) {
-    return this.registry().get(key);
-  }
-
-  @Override
-  default @Nullable K key(final @NonNull V value) {
-    return this.registry().key(value);
-  }
-
-  @Override
-  default @NonNull Set<K> keySet() {
-    return this.registry().keySet();
-  }
-
-  @Override
-  default @NonNull Iterator<V> iterator() {
-    return this.registry().iterator();
-  }
+  /**
+   * Gets the id for {@code value}.
+   *
+   * @param value the value
+   * @return the id
+   */
+  @NonNull OptionalInt id(final @NonNull V value);
 }

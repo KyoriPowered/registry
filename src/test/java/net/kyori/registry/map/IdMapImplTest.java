@@ -25,30 +25,31 @@ package net.kyori.registry.map;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.kyori.registry.api.map.IdMap;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class IdMapImplTest {
-    private static final int DEFAULT = -1000;
-    private final IdMap<String> map = IdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
-        {
-            this.defaultReturnValue(DEFAULT);
-        }
-    }, value -> value == -1000);
-
-    @Test
-    void testId() {
-        assertFalse(this.map.id("foo").isPresent());
-        this.map.put(32, "foo");
-        assertEquals(32, this.map.id("foo").orElse(DEFAULT));
+  private static final int DEFAULT = -1000;
+  private final IdMap<String> map = IdMap.create(new Int2ObjectOpenHashMap<>(), new Object2IntOpenHashMap<String>() {
+    {
+      this.defaultReturnValue(DEFAULT);
     }
+  }, value -> value == -1000);
 
-    @Test
-    void testGet() {
-        assertNull(this.map.get(32));
-        this.map.put(32, "foo");
-        assertEquals("foo", this.map.get(32));
-    }
+  @Test
+  void testId() {
+    assertFalse(this.map.id("foo").isPresent());
+    this.map.put(32, "foo");
+    assertEquals(32, this.map.id("foo").orElse(DEFAULT));
+  }
+
+  @Test
+  void testGet() {
+    assertNull(this.map.get(32));
+    this.map.put(32, "foo");
+    assertEquals("foo", this.map.get(32));
+  }
 }

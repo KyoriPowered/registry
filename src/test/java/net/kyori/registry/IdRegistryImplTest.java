@@ -21,13 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.api.registry.component;
+package net.kyori.registry;
 
-import net.kyori.registry.api.registry.RegistryGetter;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import net.kyori.registry.impl.registry.IdRegistryImpl;
+import net.kyori.registry.map.IncrementalIdMap;
+import org.junit.jupiter.api.Test;
 
-public interface DefaultedRegistryGetter<K, V> extends RegistryGetter<K, V> {
-  @NonNull K defaultKey();
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-  @NonNull V getOrDefault(final @NonNull K key);
+class IdRegistryImplTest {
+  private static final int DEFAULT = -1000;
+  private final IdRegistryImpl<String, String> registry = new IdRegistryImpl<>(
+    Registry.create(),
+    IncrementalIdMap.create(DEFAULT)
+  );
+
+  @Test
+  void testRegister() {
+    assertNull(this.registry.get("foo"));
+    assertEquals(DEFAULT, this.registry.id("bar").orElse(DEFAULT));
+    this.registry.register(32, "foo", "bar");
+    assertEquals("bar", this.registry.get("foo"));
+    assertEquals("foo", this.registry.key("bar"));
+    assertEquals(32, this.registry.id("bar").orElse(DEFAULT));
+
+    // check incremental
+    assertNull(this.registry.get("abc"));
+    this.registry.register("abc", "def");
+    assertEquals("def", this.registry.get("abc"));
+    assertEquals("abc", this.registry.key("def"));
+    assertEquals(33, this.registry.id("def").orElse(DEFAULT));
+    assertEquals("def", this.registry.byId(33));
+  }
 }

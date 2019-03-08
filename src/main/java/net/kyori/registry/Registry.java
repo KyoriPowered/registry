@@ -21,22 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.api.registry.component;
+package net.kyori.registry;
 
+import net.kyori.registry.impl.registry.RegistryImpl;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-/**
- * A read-only component of an id registry with a default key and value.
- *
- * @param <K> the key type
- * @param <V> the value type
- */
-public interface DefaultedIdRegistryGetter<K, V> extends DefaultedRegistryGetter<K, V> {
+import java.util.function.BiConsumer;
+
+public interface Registry<K, V> extends RegistryGetter<K, V> {
+  static <K, V> @NonNull RegistryImpl<K, V> create() {
+    return new RegistryImpl<>();
+  }
+
   /**
-   * Gets the id for {@code value}.
+   * Associates {@code key} to {@code value}.
    *
+   * @param key   the key
    * @param value the value
-   * @return the id
+   * @return the value
    */
-  int idOrDefault(final @NonNull V value);
+  @NonNull V register(final @NonNull K key, final @NonNull V value);
+
+  /**
+   * Adds a callback function that will be executed after any call to
+   * {@link Registry#register(Object, Object)}
+   *
+   * @param listener the callback function
+   */
+  void addRegistrationListener(final @NonNull BiConsumer<K, V> listener);
 }

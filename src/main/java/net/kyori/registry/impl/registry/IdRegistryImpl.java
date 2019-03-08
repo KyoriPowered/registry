@@ -23,9 +23,9 @@
  */
 package net.kyori.registry.impl.registry;
 
-import net.kyori.registry.api.map.IncrementalIdMap;
-import net.kyori.registry.api.registry.ForwardingRegistry;
-import net.kyori.registry.api.registry.Registry;
+import net.kyori.registry.ForwardingRegistry;
+import net.kyori.registry.Registry;
+import net.kyori.registry.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 

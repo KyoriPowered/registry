@@ -23,10 +23,10 @@
  */
 package net.kyori.registry.impl.registry;
 
-import net.kyori.registry.api.map.IncrementalIdMap;
-import net.kyori.registry.api.registry.Registry;
-import net.kyori.registry.api.registry.component.DefaultedIdRegistryGetter;
-import net.kyori.registry.api.registry.component.DefaultedRegistryGetter;
+import net.kyori.registry.DefaultedIdRegistryGetter;
+import net.kyori.registry.DefaultedRegistryGetter;
+import net.kyori.registry.Registry;
+import net.kyori.registry.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;

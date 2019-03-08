@@ -21,27 +21,54 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.registry.bidirectional;
+package net.kyori.registry;
 
-import net.kyori.registry.api.registry.Registry;
-import net.kyori.registry.impl.registry.DefaultedRegistryImpl;
-import org.junit.jupiter.api.Test;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-class DefaultValueBidirectionalRegistryTest {
-    @Test
-    void testDefaultKeyValue() {
-        final DefaultedRegistryImpl<String, String> container = new DefaultedRegistryImpl<>(Registry.create(), "_default");
-        assertEquals("_default", container.defaultKey());
+public interface RegistryGetter<K, V> extends Iterable<V> {
+  /**
+   * Gets the value for {@code key}.
+   *
+   * @param key the key
+   * @return the value
+   */
+  @Nullable V get(final @NonNull K key);
 
-        assertNull(container.get("aaa"));
-        assertNull(container.get("ccc"));
+  /**
+   * Gets the key for {@code value}.
+   *
+   * @param value the value
+   * @return the key
+   */
+  @Nullable K key(final @NonNull V value);
 
-        container.register("_default", "bbb");
-        assertEquals("bbb", container.get("aaa"));
+  /**
+   * Gets a set of the keys contained in this registry.
+   *
+   * @return a set of the keys contained in this registry
+   */
+  @NonNull Set<K> keySet();
 
-        assertNotNull(container.get("ccc"));
-        assertEquals("bbb", container.getOrDefault("ccc"));
-    }
+  /**
+   * Creates an unmodifiable iterator of values.
+   *
+   * @return an unmodifiable iterator
+   */
+  @Override
+  @NonNull Iterator<V> iterator();
+
+  /**
+   * Creates a stream of values.
+   *
+   * @return a stream
+   */
+  default @NonNull Stream<V> stream() {
+    return StreamSupport.stream(this.spliterator(), false);
+  }
 }

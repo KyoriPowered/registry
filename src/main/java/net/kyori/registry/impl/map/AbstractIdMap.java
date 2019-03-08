@@ -25,7 +25,7 @@ package net.kyori.registry.impl.map;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.kyori.registry.api.map.IdMap;
+import net.kyori.registry.map.IdMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 

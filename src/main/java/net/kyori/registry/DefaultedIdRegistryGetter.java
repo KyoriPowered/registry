@@ -21,32 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.api.map;
+package net.kyori.registry;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import java.util.OptionalInt;
 
 /**
- * A readable id map.
+ * A read-only component of an id registry with a default key and value.
  *
+ * @param <K> the key type
  * @param <V> the value type
  */
-public interface IdMapGetter<V> {
-  /**
-   * Gets a value by its id.
-   *
-   * @param id the id
-   * @return the value
-   */
-  @Nullable V get(final int id);
-
+public interface DefaultedIdRegistryGetter<K, V> extends DefaultedRegistryGetter<K, V> {
   /**
    * Gets the id for {@code value}.
    *
    * @param value the value
    * @return the id
    */
-  @NonNull OptionalInt id(final @NonNull V value);
+  int idOrDefault(final @NonNull V value);
 }

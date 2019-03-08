@@ -21,32 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.api.registry;
+package net.kyori.registry;
 
-import net.kyori.registry.impl.registry.RegistryImpl;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.function.BiConsumer;
 
-public interface Registry<K, V> extends RegistryGetter<K, V> {
-  static <K, V> @NonNull RegistryImpl<K, V> create() {
-    return new RegistryImpl<>();
+public interface ForwardingRegistry<K, V> extends ForwardingRegistryGetter<K, V>, Registry<K, V> {
+  @Override
+  @NonNull Registry<K, V> registry();
+
+  @Override
+  default @NonNull V register(final @NonNull K key, final @NonNull V value) {
+    return this.registry().register(key, value);
   }
 
-  /**
-   * Associates {@code key} to {@code value}.
-   *
-   * @param key   the key
-   * @param value the value
-   * @return the value
-   */
-  @NonNull V register(final @NonNull K key, final @NonNull V value);
-
-  /**
-   * Adds a callback function that will be executed after any call to
-   * {@link Registry#register(Object, Object)}
-   *
-   * @param listener the callback function
-   */
-  void addRegistrationListener(final @NonNull BiConsumer<K, V> listener);
+  @Override
+  default void addRegistrationListener(final @NonNull BiConsumer<K, V> listener) {
+    this.registry().addRegistrationListener(listener);
+  }
 }

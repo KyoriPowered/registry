@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.api.map;
+package net.kyori.registry.map;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -56,11 +56,23 @@ public interface IncrementalIdMap<V> extends IdMap<V> {
    * a {@link Object2IntOpenHashMap} for the {@code vToId} and the provided {@link IntPredicate}.
    *
    * @param defaultReturnValue the default int value to return for this {@link IncrementalIdMap}
+   * @param <V> the value type
+   * @return an incremental id map
+   */
+  static <V> @NonNull IncrementalIdMap<V> create(final int defaultReturnValue) {
+    return create(defaultReturnValue, value -> value == defaultReturnValue);
+  }
+
+  /**
+   * Creates a default incremental id map using a {@link Int2ObjectOpenHashMap} for the {@code idToV},
+   * a {@link Object2IntOpenHashMap} for the {@code vToId} and the provided {@link IntPredicate}.
+   *
+   * @param defaultReturnValue the default int value to return for this {@link IncrementalIdMap}
    * @param emptyChecker emptiness checker
    * @param <V> the value type
    * @return an incremental id map
    */
-  static <V> @NonNull IncrementalIdMap<V> create(final int defaultReturnValue, IntPredicate emptyChecker) {
+  static <V> @NonNull IncrementalIdMap<V> create(final int defaultReturnValue, final @NonNull IntPredicate emptyChecker) {
     return create(
       new Int2ObjectOpenHashMap<>(),
       new Object2IntOpenHashMap<V>() {
@@ -71,22 +83,6 @@ public interface IncrementalIdMap<V> extends IdMap<V> {
       emptyChecker
     );
   }
-
-  /**
-   * Creates a default incremental id map using a {@link Int2ObjectOpenHashMap} for the {@code idToV},
-   * a {@link Object2IntOpenHashMap} for the {@code vToId} and the provided {@link IntPredicate}.
-   *
-   * @param defaultReturnValue the default int value to return for this {@link IncrementalIdMap}
-   * @param <V> the value type
-   * @return an incremental id map
-   */
-  static <V> @NonNull IncrementalIdMap<V> create(final int defaultReturnValue) {
-    return create(
-      defaultReturnValue,
-      value -> value == defaultReturnValue
-    );
-  }
-
 
   /**
    * Gets the next id.
