@@ -23,6 +23,7 @@
  */
 package net.kyori.registry.id;
 
+import net.kyori.registry.DefaultedRegistry;
 import net.kyori.registry.Registry;
 import net.kyori.registry.id.map.IncrementalIdMap;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -71,14 +72,13 @@ public class DefaultedIdRegistryImpl<K, V> extends IdRegistryImpl<K, V> implemen
   @Override
   public @Nullable V byId(final int id) {
     final V value = super.byId(id);
-    return value != null ? value : this.defaultValue();
+    if(value != null) {
+      return value;
+    }
+    return this.defaultValue();
   }
 
   private @NonNull V defaultValue() {
-    if(this.defaultValue == null) {
-      throw new IllegalStateException("The default value for key '" + this.defaultKey + "' has not been registered yet!");
-    }
-    return this.defaultValue;
+    return DefaultedRegistry.defaultValue(this.defaultKey, this.defaultValue);
   }
 }
-

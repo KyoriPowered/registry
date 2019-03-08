@@ -33,25 +33,18 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @param <K> the key type
  * @param <V> the value type
  */
-public class DefaultedRegistryImpl<K, V> implements DefaultedRegistry<K, V>, ForwardingRegistry<K, V> {
-  private final Registry<K, V> registry;
+public class DefaultedRegistryImpl<K, V> extends RegistryImpl<K, V> implements DefaultedRegistry<K, V> {
   private final K defaultKey;
   private @MonotonicNonNull V defaultValue;
 
-  protected DefaultedRegistryImpl(final @NonNull Registry<K, V> registry, final @NonNull K defaultKey) {
-    this.registry = registry;
+  protected DefaultedRegistryImpl(final @NonNull K defaultKey) {
     this.defaultKey = defaultKey;
 
-    registry.addRegistrationListener((key, value) -> {
+    this.addRegistrationListener((key, value) -> {
       if(defaultKey.equals(key)) {
         this.defaultValue = value;
       }
     });
-  }
-
-  @Override
-  public @NonNull Registry<K, V> registry() {
-    return this.registry;
   }
 
   @Override
@@ -61,7 +54,10 @@ public class DefaultedRegistryImpl<K, V> implements DefaultedRegistry<K, V>, For
 
   @Override
   public @NonNull V get(final @NonNull K key) {
-    final V value = this.registry.get(key);
-    return value != null ? value : this.defaultValue;
+    final V value = super.get(key);
+    if(value != null) {
+      return value;
+    }
+    return DefaultedRegistry.defaultValue(this.defaultKey, this.defaultValue);
   }
 }

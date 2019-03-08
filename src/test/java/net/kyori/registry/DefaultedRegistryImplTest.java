@@ -27,21 +27,21 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DefaultedRegistryImplTest {
   @Test
   void testDefaultKeyValue() {
-    final DefaultedRegistryImpl<String, String> container = new DefaultedRegistryImpl<>(Registry.create(), "_default");
-    assertEquals("_default", container.defaultKey());
+    final DefaultedRegistryImpl<String, String> registry = new DefaultedRegistryImpl<>("_default");
+    assertEquals("_default", registry.defaultKey());
 
-    assertNull(container.get("aaa"));
-    assertNull(container.get("ccc"));
+    assertEquals("The default value for key '_default' has not been registered yet!", assertThrows(IllegalStateException.class, () -> registry.get("aaa")).getMessage());
+    assertEquals("The default value for key '_default' has not been registered yet!", assertThrows(IllegalStateException.class, () -> registry.get("ccc")).getMessage());
 
-    container.register("_default", "bbb");
-    assertEquals("bbb", container.get("aaa"));
+    registry.register("_default", "bbb");
+    assertEquals("bbb", registry.get("aaa"));
 
-    assertNotNull(container.get("ccc"));
-    assertEquals("bbb", container.get("ccc"));
+    assertNotNull(registry.get("ccc"));
+    assertEquals("bbb", registry.get("ccc"));
   }
 }
