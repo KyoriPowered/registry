@@ -38,67 +38,68 @@ import java.util.function.IntPredicate;
  * @param <V> the value type
  */
 public interface IncrementalIdMap<V> extends IdMap<V> {
-    /**
-     * Creates an incremental id map.
-     *
-     * @param idToV the id to value map
-     * @param vToId the value to id map
-     * @param empty emptiness checker
-     * @param <V>   the value type
-     * @return an incremental id map
-     */
-    static <V> @NonNull IncrementalIdMap<V> create(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
-        return new IncrementalIdMapImpl<>(idToV, vToId, empty);
-    }
+  /**
+   * Creates an incremental id map.
+   *
+   * @param idToV the id to value map
+   * @param vToId the value to id map
+   * @param empty emptiness checker
+   * @param <V> the value type
+   * @return an incremental id map
+   */
+  static <V> @NonNull IncrementalIdMap<V> create(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
+    return new IncrementalIdMapImpl<>(idToV, vToId, empty);
+  }
 
-    /**
-     * Creates a default incremental id map using a {@link Int2ObjectOpenHashMap} for the {@code idToV},
-     * a {@link Object2IntOpenHashMap} for the {@code vToId} and the provided {@link IntPredicate}.
-     *
-     * @param defaultReturnValue the default int value to return for this {@link IncrementalIdMap}
-     * @param emptyChecker emptiness checker
-     * @param <V> the value type
-     * @return an incremental id map
-     */
-    static <V> @NonNull IncrementalIdMap<V> create(final int defaultReturnValue, IntPredicate emptyChecker) {
-        return create(
-                new Int2ObjectOpenHashMap<>(),
-                new Object2IntOpenHashMap<V>() {{
-                    this.defaultReturnValue(defaultReturnValue);
-                }},
-                emptyChecker
-        );
-    }
+  /**
+   * Creates a default incremental id map using a {@link Int2ObjectOpenHashMap} for the {@code idToV},
+   * a {@link Object2IntOpenHashMap} for the {@code vToId} and the provided {@link IntPredicate}.
+   *
+   * @param defaultReturnValue the default int value to return for this {@link IncrementalIdMap}
+   * @param emptyChecker emptiness checker
+   * @param <V> the value type
+   * @return an incremental id map
+   */
+  static <V> @NonNull IncrementalIdMap<V> create(final int defaultReturnValue, IntPredicate emptyChecker) {
+    return create(
+      new Int2ObjectOpenHashMap<>(),
+      new Object2IntOpenHashMap<V>() {
+        {
+          this.defaultReturnValue(defaultReturnValue);
+        }
+      },
+      emptyChecker
+    );
+  }
 
-    /**
-     * Creates a default incremental id map using a {@link Int2ObjectOpenHashMap} for the {@code idToV},
-     * a {@link Object2IntOpenHashMap} for the {@code vToId} and the provided {@link IntPredicate}.
-     *
-     * @param defaultReturnValue the default int value to return for this {@link IncrementalIdMap}
-     * @param <V> the value type
-     * @return an incremental id map
-     */
-    static <V> @NonNull IncrementalIdMap<V> create(final int defaultReturnValue) {
-        return create(
-                defaultReturnValue,
-                value -> value == defaultReturnValue
-        );
-    }
+  /**
+   * Creates a default incremental id map using a {@link Int2ObjectOpenHashMap} for the {@code idToV},
+   * a {@link Object2IntOpenHashMap} for the {@code vToId} and the provided {@link IntPredicate}.
+   *
+   * @param defaultReturnValue the default int value to return for this {@link IncrementalIdMap}
+   * @param <V> the value type
+   * @return an incremental id map
+   */
+  static <V> @NonNull IncrementalIdMap<V> create(final int defaultReturnValue) {
+    return create(
+      defaultReturnValue,
+      value -> value == defaultReturnValue
+    );
+  }
 
 
+  /**
+   * Gets the next id.
+   *
+   * @return the next id
+   */
+  int next();
 
-    /**
-     * Gets the next id.
-     *
-     * @return the next id
-     */
-    int next();
-
-    /**
-     * Associates {@code value} with the next available id.
-     *
-     * @param value the value
-     * @return the id
-     */
-    int put(final @NonNull V value);
+  /**
+   * Associates {@code value} with the next available id.
+   *
+   * @param value the value
+   * @return the id
+   */
+  int put(final @NonNull V value);
 }

@@ -23,7 +23,7 @@
  */
 package net.kyori.registry.registry.bidirectional;
 
-import net.kyori.registry.impl.registry.DefaultValueIdRegistry;
+import net.kyori.registry.impl.registry.DefaultedIdRegistryImpl;
 import net.kyori.registry.api.registry.Registry;
 import net.kyori.registry.api.map.IncrementalIdMap;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class DefaultValueIdBidirectionalRegistryTest {
     private static final int DEFAULT = -1000;
 
-    private DefaultValueIdRegistry<String, String> registry = new DefaultValueIdRegistry<>(
+    private DefaultedIdRegistryImpl<String, String> registry = new DefaultedIdRegistryImpl<>(
             Registry.create(),
             "_default",
             IncrementalIdMap.create(DEFAULT)

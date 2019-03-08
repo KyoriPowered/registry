@@ -24,58 +24,55 @@
 package net.kyori.registry.impl.registry;
 
 import net.kyori.registry.api.map.IncrementalIdMap;
-import net.kyori.registry.api.registry.ForwardingRegistry;
 import net.kyori.registry.api.registry.Registry;
+import net.kyori.registry.api.registry.component.DefaultedIdRegistryGetter;
+import net.kyori.registry.api.registry.component.DefaultedRegistryGetter;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.OptionalInt;
 
-public class IdRegistryImpl<K, V> implements ForwardingRegistry<K, V> {
-  private final Registry<K, V> registry;
-  protected final IncrementalIdMap<V> ids;
+public class DefaultedIdRegistryImpl<K, V> extends IdRegistryImpl<K, V> implements DefaultedIdRegistryGetter<K, V>, DefaultedRegistryGetter<K, V> {
+  private Registry<K, V> registry;
+  private final K defaultKey;
+  private @MonotonicNonNull V defaultValue;
+  private int defaultId;
 
-  public IdRegistryImpl(final @NonNull Registry<K, V> registry, final @NonNull IncrementalIdMap<V> ids) {
+  public DefaultedIdRegistryImpl(final Registry<K, V> registry, final @NonNull K defaultKey, final @NonNull IncrementalIdMap<V> ids) {
+    super(registry, ids);
     this.registry = registry;
-    this.ids = ids;
+    this.defaultKey = defaultKey;
+
+    registry.addRegistrationListener((key, value) -> {
+      if(defaultKey.equals(key)) {
+        this.defaultValue = value;
+        this.defaultId = this.id(value).orElseThrow(() -> new IllegalStateException("This shouldn't happen!"));
+      }
+    });
   }
 
   @Override
-  public @NonNull Registry<K, V> registry() {
-    return this.registry;
+  public @NonNull K defaultKey() {
+    return this.defaultKey;
   }
 
   @Override
-  public @NonNull V register(final @NonNull K key, final @NonNull V value) {
-    return this.register(this.ids.next(), key, value);
+  public @NonNull V getOrDefault(final @NonNull K key) {
+    final V value = this.registry.get(key);
+    return value != null ? value : this.defaultValue;
   }
 
-  // TODO: should be an interface method that we implement
-  public @NonNull V register(final int id, final @NonNull K key, final @NonNull V value) {
-    this.ids.put(id, value);
-    this.registry.register(key, value);
-    return value;
+  @Override
+  public int idOrDefault(final @NonNull V value) {
+    final OptionalInt id = this.id(value);
+    return id.isPresent() ? id.getAsInt() : this.defaultId;
   }
 
-  // TODO: should be an interface method that we implement
-  /**
-   * Gets the id for {@code value}.
-   *
-   * @param value the value
-   * @return the id
-   */
-  public @NonNull OptionalInt id(final @NonNull V value) {
-    return this.ids.id(value);
-  }
-
-  // TODO: should be an interface method that we implement
-  /**
-   * Gets the value for {@code id}.
-   *
-   * @param id the id
-   * @return the value
-   */
+  @Override
   public @Nullable V byId(final int id) {
-    return this.ids.get(id);
+    final V value = super.byId(id);
+    return value != null ? value : this.defaultValue;
   }
 }
+

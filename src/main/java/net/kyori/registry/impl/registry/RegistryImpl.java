@@ -27,10 +27,15 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterators;
 import net.kyori.registry.api.registry.Registry;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 import static java.util.Objects.requireNonNull;
@@ -43,52 +48,57 @@ import static java.util.Objects.requireNonNull;
  * @param <V> the value type
  */
 public class RegistryImpl<K, V> implements Registry<K, V> {
-    protected final BiMap<K, V> map;
-    private final List<BiConsumer<K, V>> registrationListeners = new ArrayList<>();
+  protected final BiMap<K, V> map;
+  private @MonotonicNonNull List<BiConsumer<K, V>> registrationListeners;
 
-    public RegistryImpl() {
-        this(HashBiMap.create());
+  public RegistryImpl() {
+    this(HashBiMap.create());
+  }
+
+  public RegistryImpl(final @NonNull BiMap<K, V> map) {
+    this.map = map;
+  }
+
+  @Override
+  public final @NonNull V register(final @NonNull K key, final @NonNull V value) {
+    requireNonNull(key, "key");
+    requireNonNull(value, "value");
+
+    this.map.put(key, value);
+
+    if(this.registrationListeners != null) {
+      this.registrationListeners.forEach(listener -> listener.accept(key, value));
     }
 
-    public RegistryImpl(BiMap<K, V> map) {
-        this.map = map;
+    return value;
+  }
+
+  @Override
+  public void addRegistrationListener(@NonNull BiConsumer<K, V> listener) {
+    if(this.registrationListeners == null) {
+      this.registrationListeners = new ArrayList<>();
     }
+    this.registrationListeners.add(listener);
+  }
 
-    @Override
-    public final @NonNull V register(final @NonNull K key, @NonNull V value) {
-        requireNonNull(key, "key");
-        requireNonNull(value, "value");
+  @Override
+  public @Nullable V get(final @NonNull K key) {
+    requireNonNull(key, "key");
+    return this.map.get(key);
+  }
 
-        map.put(key, value);
-        registrationListeners.forEach(listener -> listener.accept(key, value));
+  @Override
+  public @Nullable K key(final @NonNull V value) {
+    return this.map.inverse().get(value);
+  }
 
-        return value;
-    }
+  @Override
+  public @NonNull Set<K> keySet() {
+    return Collections.unmodifiableSet(this.map.keySet());
+  }
 
-    @Override
-    public void addRegistrationListener(@NonNull BiConsumer<K, V> listener) {
-        registrationListeners.add(listener);
-    }
-
-    @Override
-    public @Nullable V get(final @NonNull K key) {
-        requireNonNull(key, "key");
-        return map.get(key);
-    }
-
-    @Override
-    public @NonNull Set<K> keySet() {
-        return Collections.unmodifiableSet(map.keySet());
-    }
-
-    @Nullable
-    @Override
-    public K key(@NonNull V value) {
-        return map.inverse().get(value);
-    }
-
-    @Override
-    public @NonNull Iterator<V> iterator() {
-        return Iterators.unmodifiableIterator(map.values().iterator());
-    }
+  @Override
+  public @NonNull Iterator<V> iterator() {
+    return Iterators.unmodifiableIterator(this.map.values().iterator());
+  }
 }

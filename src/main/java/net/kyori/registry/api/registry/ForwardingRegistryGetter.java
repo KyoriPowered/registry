@@ -28,46 +28,27 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Iterator;
 import java.util.Set;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
-public interface RegistryView<K, V> extends Iterable<V> {
-    /**
-     * Gets the value for {@code key}.
-     *
-     * @param key the key
-     * @return the value
-     */
-    @Nullable V get(final @NonNull K key);
+public interface ForwardingRegistryGetter<K, V> extends RegistryGetter<K, V> {
+  @NonNull RegistryGetter<K, V> registry();
 
-    /**
-     * Gets a set of the keys contained in this registry.
-     *
-     * @return a set of the keys contained in this registry
-     */
-    @NonNull Set<K> keySet();
+  @Override
+  default @Nullable V get(final @NonNull K key) {
+    return this.registry().get(key);
+  }
 
-    /**
-     * Gets the key for {@code value}.
-     *
-     * @param value the value
-     * @return the key
-     */
-    @Nullable K key(final @NonNull V value);
+  @Override
+  default @Nullable K key(final @NonNull V value) {
+    return this.registry().key(value);
+  }
 
-    /**
-     * Creates an unmodifiable iterator of values.
-     *
-     * @return an unmodifiable iterator
-     */
-    @NonNull Iterator<V> iterator();
+  @Override
+  default @NonNull Set<K> keySet() {
+    return this.registry().keySet();
+  }
 
-    /**
-     * Creates a stream of values.
-     *
-     * @return a stream
-     */
-    default @NonNull Stream<V> stream() {
-        return StreamSupport.stream(this.spliterator(), false);
-    }
+  @Override
+  default @NonNull Iterator<V> iterator() {
+    return this.registry().iterator();
+  }
 }

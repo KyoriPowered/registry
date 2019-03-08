@@ -23,35 +23,30 @@
  */
 package net.kyori.registry.api.registry;
 
-import com.google.common.collect.BiMap;
 import net.kyori.registry.impl.registry.RegistryImpl;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.function.BiConsumer;
 
-public interface Registry<K, V> extends RegistryView<K, V> {
-    static <K, V> RegistryImpl<K, V> create() {
-        return new RegistryImpl<>();
-    }
+public interface Registry<K, V> extends RegistryGetter<K, V> {
+  static <K, V> @NonNull RegistryImpl<K, V> create() {
+    return new RegistryImpl<>();
+  }
 
-    static <K, V> RegistryImpl<K, V> createFromMap(BiMap<K, V> map) {
-        return new RegistryImpl<>(map);
-    }
+  /**
+   * Associates {@code key} to {@code value}.
+   *
+   * @param key   the key
+   * @param value the value
+   * @return the value
+   */
+  @NonNull V register(final @NonNull K key, final @NonNull V value);
 
-    /**
-     * Associates {@code key} to {@code value}.
-     *
-     * @param key   the key
-     * @param value the value
-     * @return the value
-     */
-    @NonNull V register(final @NonNull K key, final @NonNull V value);
-
-    /**
-     * Adds a callback function that will be executed after any call to
-     * {@link Registry#register(Object, Object)}
-     *
-     * @param listener the callback function
-     */
-    void addRegistrationListener(final @NonNull BiConsumer<K, V> listener);
+  /**
+   * Adds a callback function that will be executed after any call to
+   * {@link Registry#register(Object, Object)}
+   *
+   * @param listener the callback function
+   */
+  void addRegistrationListener(final @NonNull BiConsumer<K, V> listener);
 }

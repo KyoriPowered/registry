@@ -36,29 +36,29 @@ import java.util.function.IntPredicate;
  * @param <V> the value type
  */
 public class IncrementalIdMapImpl<V> extends IdMapImpl<V> implements IncrementalIdMap<V> {
-    private int nextId;
+  private int nextId;
 
-    public IncrementalIdMapImpl(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
-        super(idToV, vToId, empty);
-    }
+  public IncrementalIdMapImpl(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
+    super(idToV, vToId, empty);
+  }
 
-    @Override
-    public int next() {
-        return this.nextId;
-    }
+  @Override
+  public int next() {
+    return this.nextId;
+  }
 
-    @Override
-    public int put(@NonNull final V value) {
-        final int id = this.nextId;
-        this.put(id, value);
-        return id;
-    }
+  @Override
+  public int put(@NonNull final V value) {
+    final int id = this.nextId;
+    this.put(id, value);
+    return id;
+  }
 
-    @Override
-    protected void put0(final int id, @NonNull final V value) {
-        super.put0(id, value);
-        if (this.nextId <= id) {
-            this.nextId = id + 1;
-        }
+  @Override
+  protected void put0(final int id, @NonNull final V value) {
+    super.put0(id, value);
+    if(this.nextId <= id) {
+      this.nextId = id + 1;
     }
+  }
 }

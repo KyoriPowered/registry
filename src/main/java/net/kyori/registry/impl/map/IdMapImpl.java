@@ -36,19 +36,19 @@ import java.util.function.IntPredicate;
  * @param <V> the value type
  */
 public class IdMapImpl<V> extends AbstractIdMap<V> {
-    private final IntPredicate empty;
+  private final IntPredicate empty;
 
-    public IdMapImpl(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
-        super(idToV, vToId);
-        this.empty = empty;
-    }
+  public IdMapImpl(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId, final @NonNull IntPredicate empty) {
+    super(idToV, vToId);
+    this.empty = empty;
+  }
 
-    @Override
-    public @NonNull OptionalInt id(final @NonNull V value) {
-        final int id = this.vToId.getInt(value);
-        if (!this.empty.test(id)) {
-            return OptionalInt.of(id);
-        }
-        return OptionalInt.empty();
+  @Override
+  public @NonNull OptionalInt id(final @NonNull V value) {
+    final int id = this.vToId.getInt(value);
+    if(!this.empty.test(id)) {
+      return OptionalInt.of(id);
     }
+    return OptionalInt.empty();
+  }
 }

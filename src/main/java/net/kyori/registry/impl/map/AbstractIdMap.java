@@ -35,27 +35,27 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @param <V> the value type
  */
 public abstract class AbstractIdMap<V> implements IdMap<V> {
-    protected final Int2ObjectMap<V> idToV;
-    protected final Object2IntMap<V> vToId;
+  protected final Int2ObjectMap<V> idToV;
+  protected final Object2IntMap<V> vToId;
 
-    protected AbstractIdMap(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId) {
-        this.idToV = idToV;
-        this.vToId = vToId;
-    }
+  protected AbstractIdMap(final @NonNull Int2ObjectMap<V> idToV, final @NonNull Object2IntMap<V> vToId) {
+    this.idToV = idToV;
+    this.vToId = vToId;
+  }
 
-    @Override
-    public final @NonNull V put(final int id, final @NonNull V value) {
-        this.put0(id, value);
-        return value;
-    }
+  @Override
+  public final @NonNull V put(final int id, final @NonNull V value) {
+    this.put0(id, value);
+    return value;
+  }
 
-    protected void put0(final int id, final @NonNull V value) {
-        this.idToV.put(id, value);
-        this.vToId.put(value, id);
-    }
+  protected void put0(final int id, final @NonNull V value) {
+    this.idToV.put(id, value);
+    this.vToId.put(value, id);
+  }
 
-    @Override
-    public @Nullable V get(final int id) {
-        return this.idToV.get(id);
-    }
+  @Override
+  public @Nullable V get(final int id) {
+    return this.idToV.get(id);
+  }
 }

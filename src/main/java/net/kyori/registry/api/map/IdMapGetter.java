@@ -34,19 +34,19 @@ import java.util.OptionalInt;
  * @param <V> the value type
  */
 public interface IdMapGetter<V> {
-    /**
-     * Gets the id for {@code value}.
-     *
-     * @param value the value
-     * @return the id
-     */
-    @NonNull OptionalInt id(final @NonNull V value);
+  /**
+   * Gets a value by its id.
+   *
+   * @param id the id
+   * @return the value
+   */
+  @Nullable V get(final int id);
 
-    /**
-     * Gets a value by its id.
-     *
-     * @param id the id
-     * @return the value
-     */
-    @Nullable V get(final int id);
+  /**
+   * Gets the id for {@code value}.
+   *
+   * @param value the value
+   * @return the id
+   */
+  @NonNull OptionalInt id(final @NonNull V value);
 }

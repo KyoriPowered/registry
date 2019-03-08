@@ -24,7 +24,7 @@
 package net.kyori.registry.registry.unidirectional;
 
 import net.kyori.registry.api.registry.Registry;
-import net.kyori.registry.impl.registry.DefaultValueRegistry;
+import net.kyori.registry.impl.registry.DefaultedRegistryImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultValueUnidirectionalRegistryTest {
     @Test
     void testDefaultKeyValue() {
-        final DefaultValueRegistry<String, String> container = new DefaultValueRegistry<>(Registry.create(), "_default");
+        final DefaultedRegistryImpl<String, String> container = new DefaultedRegistryImpl<>(Registry.create(), "_default");
         assertEquals("_default", container.defaultKey());
 
         assertNull(container.get("aaa"));

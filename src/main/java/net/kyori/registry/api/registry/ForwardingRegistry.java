@@ -21,13 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.kyori.registry.api.registry.component;
+package net.kyori.registry.api.registry;
 
-import net.kyori.registry.api.registry.RegistryView;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public interface DefaultedRegistry<K, V> extends RegistryView<K, V> {
-    @NonNull K defaultKey();
+import java.util.function.BiConsumer;
 
-    @NonNull V getOrDefault(@NonNull K key);
+public interface ForwardingRegistry<K, V> extends ForwardingRegistryGetter<K, V>, Registry<K, V> {
+  @Override
+  @NonNull Registry<K, V> registry();
+
+  @Override
+  default @NonNull V register(final @NonNull K key, final @NonNull V value) {
+    return this.registry().register(key, value);
+  }
+
+  @Override
+  default void addRegistrationListener(final @NonNull BiConsumer<K, V> listener) {
+    this.registry().addRegistrationListener(listener);
+  }
 }

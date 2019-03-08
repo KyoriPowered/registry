@@ -28,14 +28,15 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 /**
  * A read-only component of an id registry with a default key and value.
  *
+ * @param <K> the key type
  * @param <V> the value type
  */
-public interface DefaultedRegistryIdentifier<V> {
-    /**
-     * Gets the id for {@code value}.
-     *
-     * @param value the value
-     * @return the id
-     */
-    int idOrDefault(final @NonNull V value);
+public interface DefaultedIdRegistryGetter<K, V> extends DefaultedRegistryGetter<K, V> {
+  /**
+   * Gets the id for {@code value}.
+   *
+   * @param value the value
+   * @return the id
+   */
+  int idOrDefault(final @NonNull V value);
 }
